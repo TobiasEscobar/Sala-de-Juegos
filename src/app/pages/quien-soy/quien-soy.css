@@ -1,0 +1,48 @@
+#titulo-juego {
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+.card-bio {
+    background-color: #1a1a1a; 
+    color: #f1f1f1;            
+    border-radius: 15px;       
+    border: 2px solid #18e0e7; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+    padding: 20px;             
+}
+
+.card-bio img {
+    border: 2px solid #18e0e7;
+    width: 140px;
+    height: 140px;
+    margin-bottom: 15px;
+}
+
+.card-bio:hover {
+    transform: translateY(-7px);    /* Sube un poco */
+    box-shadow: 0 12px 25px rgba(0,0,0,0.6); /* Sombra más intensa */
+    transition: all 0.3s ease;
+}
+
+.card-bio .card-title {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.card-bio .card-text {
+    font-family: 'Verdana', sans-serif;
+    line-height: 1.5;
+}
+
+/*Juego*/
+
+.card-juego {
+    background-color: #1a1a1a; 
+    color: #f1f1f1;            
+    border-radius: 15px;       
+    border: 2px solid #3b32bb; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+    padding: 20px;  
+}

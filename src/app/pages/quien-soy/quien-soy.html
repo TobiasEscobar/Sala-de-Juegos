@@ -1,0 +1,48 @@
+<section class="container my-5">
+    @if (loading) {
+        <p>Cargando perfil...</p>
+    } @else if (user) {
+        <div class="row justify-content-center">
+            
+            <div class="col-md-6">
+
+                <div class="card text-center card-bio">
+
+                    <img [src]="user.avatar_url" class="card-img-top rounded-circle mx-auto mt-3" alt="Avatar">
+
+                    <div class="card-body">
+                        <h2 class="card-title">{{ user.name }}</h2>
+                        <p class="card-text">{{ user.bio }}</p>
+                        <p>
+                            <strong>Repositorios:</strong> {{ user.public_repos }} |
+                            <strong>Seguidores:</strong> {{ user.followers }} |
+                            <strong>Siguiendo:</strong> {{ user.following }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    } @else {
+        <p>No se encontró información del usuario.</p>
+    }
+</section>
+
+<section class="container my-5">
+    <div class="card card-juego">
+        <div class="card-body">
+            <h2 class="card-title" id="titulo-juego">Mi juego propio: 2048</h2>
+            <p class="card-text">
+                El objetivo es conseguir llegar al numero 2048 haciendo combinaciones entre casillas del mismo numero para 
+                crear nuevas con el resultado de la suma. Ejemplo: 2 casillas con el numero 4 crearian una con el valor de 8.
+                Con cada movimiento que haga el jugador (izquierda, derecha, arriba o abajo), una nueva casilla con numero 2 o 4 
+                se creara en un espacio vacio disponible ademas de que todas las casillas van a moverse para la direccion en la que fue el movimiento
+                <br><br>
+                El juego finaliza cuando ya no hay mas movimientos posibles para realizar.
+            </p>
+        </div>
+    </div>
+</section>
+
