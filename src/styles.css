@@ -13,3 +13,38 @@ body, app-root {
 main {
     flex: 1; /* ocupa todo el espacio disponible entre nav y footer */
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.bg-main-color{
+    background: #0b0d13;
+}
+
+.bg-xbox-dark {
+    background-color: #0b0d13 !important;
+}
+
+.bg-xbox-section {
+    background-color: #1A1A1A !important;
+}
+
+.bg-xbox-green {
+    background-color: #107C10 !important;
+}
+
+.text-xbox-white {
+    color: #FFFFFF !important;
+}
+
+.text-xbox-gray {
+    color: #B0B0B0 !important;
+}
+
+.text-xbox-green {
+    color: #107C10 !important;
+}
+
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}

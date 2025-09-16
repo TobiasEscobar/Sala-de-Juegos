@@ -1,1 +1,35 @@
-<p>Ingreso a registro</p>
+<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-xbox-dark font-inter">
+    <form [formGroup]="usuarioForm" (ngSubmit)="crearUsuario()" class="w-100" style="max-width: 1000px;">
+        <div class="bg-xbox-section text-xbox-white p-4 py-lg-5 px-lg-5" style="border-radius: 10px; box-shadow: 0 0 40px rgba(0,0,0,0.5); transition: all 0.3s ease-in-out;">
+
+            <h2  class="display-4 text-center text-xbox-white">Crea tu cuenta</h2>
+            <p  class="text-center text-xbox-green">Completa tus datos para poder comenzar</p>
+            
+            <div class="row pt-5">
+                <div class="col-12 col-lg-6 mb-4">
+                <label class="form-label fw-bold text-xbox-gray">NOMBRE</label>
+                <input type="text" class="form-control bg-dark text-xbox-white border-0" name="nombre" placeholder="Nombre" formControlName="nombre">
+                </div>
+                <div class="col-12 col-lg-6 mb-4">
+                <label class="form-label fw-bold text-xbox-gray">APELLIDO</label>
+                <input type="text" class="form-control bg-dark text-xbox-white border-0" name="apellido" placeholder="Apellido" formControlName="apellido">
+                </div>
+
+                <div class="col-12 col-lg-6 mb-4">
+                <label class="form-label fw-bold text-xbox-gray">CORREO</label>
+                <input type="email" class="form-control bg-dark text-xbox-white border-0" name="email" placeholder="Correo" formControlName="email">
+                </div>
+                
+                <div class="col-12 col-lg-6 mb-4">
+                <label class="form-label fw-bold text-xbox-gray">CONTRASEÑA</label>
+                <input type="password" class="form-control bg-dark text-xbox-white border-0" name="password" placeholder="*******" formControlName="password">
+                </div>
+
+                <div class="d-flex justify-content-center mt-5">        
+                <button type="submit" class="btn bg-xbox-green text-xbox-white px-5 py-2 w-50" style="border-radius: 50px;">Registrarse</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

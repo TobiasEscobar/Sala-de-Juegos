@@ -1,1 +1,56 @@
-<p>Ingreso a login</p>
+<div class="d-flex align-items-center justify-content-center vh-100 bg-xbox-dark font-inter">
+    <div class="card p-4 shadow-lg" style="width: 350px;">
+        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <!-- Email -->
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input id="email" type="email" class="form-control"
+                placeholder="Ingrese su email"
+                formControlName="email">
+
+            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+            <small class="text-danger">Ingrese un email válido</small>
+            }
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+            <input id="password"
+                    [type]="passwordVisible ? 'text' : 'password'"
+                    class="form-control"
+                    placeholder="Ingrese su contraseña"
+                    formControlName="password">
+            <button class="btn btn-outline-secondary" type="button"
+                    (click)="togglePasswordVisibility()">
+                {{ passwordVisible ? 'Ocultar' : 'Ver' }}
+            </button>
+            </div>
+
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <small class="text-danger">La contraseña es obligatoria</small>
+            }
+        </div>
+
+        <!-- Botón login -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">
+            Ingresar
+            </button>
+        </div>
+        </form>
+
+        <!-- Acceso rápido -->
+        <div class="mt-4 text-center">
+        <p class="text-muted">Acceso rápido</p>
+        <div class="d-flex justify-content-around">
+            <button (click)="quickAccess('emailYo')">Usuario 1</button>
+            <button (click)="quickAccess('emailSofi')">Usuario 2</button>
+            <button (click)="quickAccess('emailSimba')">Usuario 3</button>
+        </div>
+        </div>
+    </div>
+</div>

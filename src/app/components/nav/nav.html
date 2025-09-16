@@ -1,25 +1,33 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-    <!-- Izquierda -->
+        <!-- Izquierda -->
         <a class="navbar-brand" routerLink="/home">Sala de Juegos</a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" routerLink="/home">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" routerLink="/quien-soy">Quien soy</a>
-            </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/home">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/quien-soy">Quien soy</a>
+        </li>
         </ul>
 
-    <!-- Derecha -->
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <!-- Derecha -->
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        @if (!isLogged) {
+            <li class="nav-item">
             <a class="nav-link" routerLink="/login">Ingresar</a>
-        </li>
-        <li class="nav-item">
+            </li>
+            <li class="nav-item">
             <a class="nav-link" routerLink="/registro">Registrarse</a>
-        </li>
+            </li>
+        } @else {
+            <li class="nav-item">
+                <span class="navbar-text me-3 text-nombre">Usuario: {{ currentUser?.nombre }}</span>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" (click)="logout()">Cerrar sesión</a>
+            </li>
+        }
         </ul>
-
     </div>
 </nav>
