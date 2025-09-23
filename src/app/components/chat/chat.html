@@ -1,0 +1,26 @@
+<div class="chat-container shadow">
+    <div class="chat-header bg-dark text-white d-flex justify-content-between align-items-center p-2">
+        <span>Chat</span>
+        <button class="btn btn-sm btn-danger" (click)="cerrarChat()">X</button>
+    </div>
+
+    <div class="chat-mensajes flex-grow-1 p-2 overflow-auto">
+        @for (m of mensajes(); track m.id) {
+        <div [class.mi-mensaje]="m.usuario === usuarioActual" 
+            [class.otro-mensaje]="m.usuario !== usuarioActual"
+            class="mb-2 p-2 rounded">
+            <div class="fw-bold">{{ m.usuario }}</div>
+            <div>{{ m.mensaje }}</div>
+            <small class="text-muted">{{ m.fecha | date:'shortTime' }}</small>
+        </div>
+        }
+    </div>
+
+    <div class="chat-input d-flex p-2">
+        <input [(ngModel)]="nuevoMensaje" 
+            (keyup.enter)="enviar()" 
+            class="form-control me-2" 
+            placeholder="Escribe un mensaje..." />
+        <button class="btn btn-primary" (click)="enviar()">Enviar</button>
+    </div>
+</div>

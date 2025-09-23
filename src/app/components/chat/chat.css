@@ -1,0 +1,27 @@
+.chat-container {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.chat-mensajes {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.mi-mensaje {
+    background: #d1e7dd;
+    text-align: right;
+    }
+
+.otro-mensaje {
+    background: #f8d7da;
+    text-align: left;
+}
+

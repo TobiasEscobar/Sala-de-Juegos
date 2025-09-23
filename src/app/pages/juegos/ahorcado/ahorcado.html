@@ -1,0 +1,74 @@
+<div class="container text-center mt-4">
+
+    <h1 class="mb-4 text-primary">🎮 Ahorcado</h1>
+
+    <!-- Info del juego -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⏳ Tiempo</h5>
+                    <p class="card-text fs-4 text-danger">{{ tiempoRestante$ | async }}s</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⭐ Puntos</h5>
+                    <p class="card-text fs-4 text-success">{{puntos}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">❌ Intentos</h5>
+                    <p class="card-text fs-4 text-warning">{{intentosFallidos}} / 3</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(!empezarJuego){
+        <p class="text-xbox-white">Toque en el boton de jugar para empezar</p>
+    } @else {
+        <!-- Imagen del ahorcado -->
+        <div class="mb-4">
+            <img [src]="imagenActual" alt="Ahorcado" class="img-fluid" style="max-height: 250px;">
+        </div>
+
+        <!-- Palabra -->
+        <h3 class="mb-4 text-uppercase tracking-widest texto">
+            {{palabraOculta.join(' ')}}
+        </h3>
+
+        <!-- Botonera de letras -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+            @for(letra of letras; track letra){
+                <button 
+                    type="button" 
+                    class="btn btn-outline-primary fw-bold"
+                    [disabled]="!juegoActivo || letrasUsadas.includes(letra)"
+                    (click)="seleccionarLetra(letra)">
+                    {{letra}}
+                </button>
+            }
+        </div>
+    }
+
+    <!-- Botones de control -->
+    <div class="d-flex justify-content-center gap-3">
+        @if(!empezarJuego){
+            <button class="btn btn-warning btn-lg" (click)="empezar()">Jugar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+        } @else {
+            <button class="btn btn-warning btn-lg" (click)="reiniciarJuego()">🔄 Reiniciar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+        }
+
+    </div>
+
+</div>

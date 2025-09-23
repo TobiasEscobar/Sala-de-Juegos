@@ -8,6 +8,10 @@ body, app-root {
     flex-direction: column;
     min-height: 100vh;
     background-color: #e9f2ff;
+    background-image: url('/background3.jpg');
+    background-size: cover; /* Ajusta la imagen para cubrir todo el espacio disponible */
+    background-position: center; /* Centra la imagen dentro del elemento */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
 }
 
 main {
@@ -48,3 +52,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .font-inter {
     font-family: 'Inter', sans-serif;
 }
+
+/* .sticky-chat {
+    position: sticky;
+    top: 1rem;
+    height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+} */

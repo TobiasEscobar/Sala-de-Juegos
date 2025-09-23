@@ -1,9 +1,10 @@
 export class User {
     constructor(
         private _id: number,
-        private _userId: number,
+        private _user_id: number,
         private _nombre: string,
-        private _email: string
+        private _email: string,
+        private _edad: number
         ) {}
     
     get id_usuario(): number {
@@ -15,11 +16,11 @@ export class User {
     }
 
     get userId(): number {
-        return this._userId;
+        return this._user_id;
     }
 
     set userId(value: number) {
-        this._userId = value;
+        this._user_id = value;
     }
 
     get nombre(): string {
@@ -37,4 +38,13 @@ export class User {
     set email(value: string) {
         this._email = value;
     }
+
+    get edad(): number {
+        return this._edad;
+    }
+
+    set edad(value: number) {
+        this._edad = value;
+    }
+
 }

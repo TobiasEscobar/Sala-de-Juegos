@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { User } from '../../clases/user';
@@ -13,7 +13,7 @@ export class Nav implements OnInit {
   isLogged : boolean = false;
   currentUser: User | null = null;
 
-  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     // Suscribirse al estado de login

@@ -1,0 +1,41 @@
+<div >
+    <div class="container min-vh-100"> 
+        <div class="p-5">
+            <div class="bg-dark p-5 text-white rounded shadow-lg d-flex flex-column" style="min-height: 100%;">
+                
+                <h1  style="color:rgb(140, 4, 145)"class="display-3 fw-bold  text-center my-5">RANKING {{rankingActual.toUpperCase()}}</h1>
+
+                <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap">
+                    <button [disabled]="rankingActual==='ahorcado'"(click)="traerRanking('puntuacion','ahorcado')"class="btn btn-ranking-tab text-xbox-white ">Ahorcado</button>
+                    <button [disabled]="rankingActual==='mayor_menor'"(click)="traerRanking('acierto','mayor_o_menor')"class="btn btn-ranking-tab text-xbox-white">Mayor Menor</button>
+                    <button [disabled]="rankingActual==='preguntados'"(click)="traerRanking('acierto','preguntados')"class="btn btn-ranking-tab text-xbox-white">Preguntados</button>
+                    <button [disabled]="rankingActual==='1024'"(click)="traerRanking('puntuacion','juego_1024')"class="btn btn-ranking-tab text-xbox-white">1024</button>
+                </div>
+
+                <div class="fs-4 row bg-xbox-green rounded py-2 text-dark fw-bold border-bottom border-black">
+                <div class="col text-center">POSICIÓN</div>
+                <div class="col text-center">NOMBRE</div>
+                <div class="col text-center">{{ tipoPuntuacion ? 'PUNTUACION' : 'ACIERTOS' }}</div>
+
+                </div>
+
+                @for (r of ranking(); let i = $index; track r.id) {
+                    <div class="row py-3 border-bottom fs-5 ">
+                    <div class="col text-center">{{ i + 1 }}</div>
+                    <div class="col text-center">{{ r.nombre }}</div>
+                    @if(tipoPuntuacion)
+                    {
+                        <div class="col text-center">{{ r.puntos }}</div>
+                    }
+                    @else {
+                        <div class="col text-center">{{ r.aciertos }}</div>
+                    }
+                    </div>
+                }
+
+            </div>
+        </div>
+        <button class="btn btn-warning" (click)="volverHome()">Volver</button>
+    </div>
+</div>
+

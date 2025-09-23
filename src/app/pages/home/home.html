@@ -1,76 +1,116 @@
-<div class="container py-4">
+<div class="container-total">
 
-    <!-- Mensaje según login -->
-    @if (!isLogged) {
-        <div class="alert alert-info text-center">
-        <p>Bienvenido a la sala de juegos 🎮</p>
-        <p>Por favor, ingrese o regístrese para disfrutar más funciones.</p>
+    <div class="container py-4">
+
+        <!-- Mensaje según login -->
+        @if (!isLogged) {
+            <div class="container justify-content-center bg-dark container-bienvenida">
+            <h1 class="title-bienvenida">¡Bienvenido a mi Sala de Juegos 🎮!</h1>
+            <br>
+            <p id="p-bienvenida">Por favor, ingrese o regístrese para acceder a los juegos y sus rankings.</p>
+            </div>
+        }
+        <!-- } @else {
+            <div class="">
+            <h3>Bienvenido/a <strong>{{ currentUser?.nombre }}</strong> a nuestra web!</h3>
+            </div>
+        } -->
+
+
+        <h2 class="title">Nuestra selección de juegos clasicos</h2>
+
+
+        <div class="row justify-content-center g-4">
+            @for (juego of [1,2,3]; track juego) {
+                <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center">
+                    <div class="card text-center shadow-sm juego-card">
+                        <!-- Imagen -->
+                        <img src="juego{{juego}}.png" class="rounded-circle img-juego" alt="Juego {{juego}}">
+
+                        <!-- Body -->
+                        <div class="card-body juego-body-card">
+                            @if (juego === 1) {
+
+                                <h5 class="card-title">Ahorcado</h5>
+                                <p>Forme la mayor cantidad de palabras posibles antes de que se termine el tiempo o sus intentos!</p>
+                                <div class="d-flex justify-content-center gap-3 mt-3">
+                                    @if (!isLogged) {
+                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
+                                    } @else {
+                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/ahorcado')">Jugar</button>
+                                        <button class="btn boton-secundario" (click)="dirigirARankings('/ranking')">Ver tabla de puntos</button>
+                                    }
+                                </div>
+
+                            } @else if (juego === 2) {
+
+                                <h5 class="card-title">Mayor o Menor</h5>
+                                <p>Apueste a si la siguiente carta que salga será mayor o menor a la que usted tiene.</p>
+                                <div class="d-flex justify-content-center gap-3 mt-3">
+                                    @if (!isLogged) {
+                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
+                                    } @else {
+                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/mayor-o-menor')">Jugar</button>
+                                        <button class="btn boton-secundario" (click)="dirigirARankings('/ranking')">Ver tabla de puntos</button>
+                                    }
+                                </div>
+
+                            } @else {
+
+                                <h5 class="card-title">Preguntados</h5>
+                                <p>Mida su nivel de cultura general en este divertido test e intente llegar al maximo puntaje.</p>
+                                <div class="d-flex justify-content-center gap-3 mt-3">
+                                    @if (!isLogged) {
+                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
+                                    } @else {
+                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/preguntados')">Jugar</button>
+                                        <button class="btn boton-secundario" (click)="dirigirARankings('/ranking')">Ver tabla de puntos</button>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-    } @else {
-        <div class="alert alert-success text-center">
-        <p>Bienvenido <strong>{{ currentUser?.nombre }}</strong> a nuestra web!</p>
-        </div>
-    }
+            
 
-    <h2 class="title">Nuestra selección de juegos clasicos</h2>
+        <br>
+        <h2 class="title">Juego Especial</h2>
 
-    <div class="row justify-content-center g-4">
-        @for (juego of [1,2,3]; track juego) {
+        <div class="row justify-content-center g-4">
             <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center">
                 <div class="card text-center shadow-sm juego-card">
                     <!-- Imagen -->
-                    <img src="juego{{juego}}.png" class="card-img-top img-juego" alt="Juego {{juego}}">
-
+                    <img src="juego-propio.png" class="rounded-circle img-juego" alt="Juego 2048">
+                    
                     <!-- Body -->
                     <div class="card-body juego-body-card">
-                        @if (juego === 1) {
-                            <h5 class="card-title">Ahorcado</h5> 
-                        } @else if (juego === 2) {
-                            <h5 class="card-title">Mayor O Menor</h5>
-                        } @else {
-                            <h5 class="card-title">Preguntados</h5>
-                        }
+                        <h5 class="card-title">1024</h5>
+                        <p>¿Podrá llegar al 1024 antes de que se termine el tiempo?</p>
+                        
                         <div class="d-flex justify-content-center gap-3 mt-3">
                             @if (!isLogged) {
-                                <button class="btn btn-primary">Ingresar</button>
-                                <button class="btn btn-secondary">Registrarse</button>
+                                <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
                             } @else {
-                                <button class="btn btn-primary">Jugar</button>
-                                <button class="btn btn-secondary">Ver tabla de puntos</button>
+                                <button class="btn boton-primario" (click)="dirigirAJuegos('/1024')">Jugar</button>
+                                <button class="btn boton-secundario" (click)="dirigirARankings('/ranking')">Ver tabla de puntos</button>
                             }
                         </div>
                     </div>
                 </div>
             </div>
-        }
-    </div>
-        
-
-    <br>
-    <h2 class="title">Juego Especial</h2>
-
-    <div class="row justify-content-center g-4">
-        <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center">
-            <div class="card text-center shadow-sm juego-card">
-                <!-- Imagen -->
-                <img src="juego1.png" class="card-img-top img-juego" alt="Juego 2048">
-
-                <!-- Body -->
-                <div class="card-body juego-body-card">
-                    <h5 class="card-title">2048</h5>
-                    
-                    <div class="d-flex justify-content-center gap-3 mt-3">
-                        @if (!isLogged) {
-                            <button class="btn btn-primary">Ingresar</button>
-                            <button class="btn btn-secondary">Registrarse</button>
-                        } @else {
-                            <button class="btn btn-primary">Jugar</button>
-                            <button class="btn btn-secondary">Ver tabla de puntos</button>
-                        }
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
+
+        <div class="home-chat">
+
+            <button class="btn btn-primary chat-toggle" (click)="toggleChat()">
+                Chat
+            </button>
+
+            @if (mostrarChat) {
+                <app-chat (cerrar)="toggleChat()"></app-chat>
+            }
+        </div>
 
 </div>

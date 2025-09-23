@@ -1,0 +1,45 @@
+<div class="container py-4 text-center">
+
+    <!-- Info del jugador -->
+    <div class="card bg-dark text-white mb-4">
+        <div class="card-body">
+        <p><strong>Jugador:</strong> {{ usuario?.nombre }}</p>
+        <p><strong>Puntos:</strong> {{ aciertos }} / {{ maxAciertos }}</p>
+        <p><strong>Vidas:</strong> {{ vidas }}</p>
+        <p><strong>Fallidos:</strong> {{ intentosFallidos }}</p>
+        </div>
+    </div>
+
+    <!-- Mesa de juego -->
+    <div class="row justify-content-center mb-4">
+
+        <!-- Carta actual -->
+        <div class="col-md-4 mb-3">
+            <h2 class="text-xbox-white">Carta actual</h2>
+            @if (cartaActual) {
+                <img [src]="cartaActual.imagen_url" class="img-fluid rounded shadow img-carta" alt="Carta actual" />
+            }
+        </div>
+
+    </div>
+
+    <!-- Botones de elección -->
+    @if (juegoActivo) {
+        <div class="d-flex justify-content-center gap-3 mb-4">
+        <button (click)="elegir('mayor')" class="btn btn-success btn-lg">Mayor</button>
+        <button (click)="elegir('menor')" class="btn btn-danger btn-lg">Menor</button>
+        </div>
+    }
+
+    <!-- Botón volver -->
+    <div class="d-flex justify-content-center gap-3">
+        @if(!empezarJuego){
+            <button class="btn btn-warning btn-lg" (click)="empezar()">Jugar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+        } @else {
+            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+        }
+
+    </div>
+
+</div>

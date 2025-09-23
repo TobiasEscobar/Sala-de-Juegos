@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Fin del juego</h1>
+
+<mat-dialog-content>
+    <p>Resultado: {{data.resultado}}</p>
+    <p>Puntos: {{data.puntos}}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="cerrar('home')">Salir al Home</button>
+    <button mat-raised-button color="primary" (click)="cerrar('reintentar')">Volver a jugar</button>
+</mat-dialog-actions>

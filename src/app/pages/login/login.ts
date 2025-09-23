@@ -25,12 +25,28 @@ export class Login {
     // Definición del formulario
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  private validationMessages: { [key: string]: string } = {
+    password: 'Contraseña incorrecta: recuerde que el mínimo es de 6 caracteres.',
+    email: 'Email inválido o incorrecto.'
+  };
+
+  // funcion auxiliar para verificacion del formulario
+  private mostrarErroresFormulario() {
+    for (const campo in this.loginForm.controls) {
+      const control = this.loginForm.get(campo);
+      if (control && control.invalid) {
+        this.mostrarError(this.validationMessages[campo]);
+        break; // solo muestra el primer error
+      }
+    }
   }
 
   async onLogin() {
@@ -40,7 +56,9 @@ export class Login {
       // Si hay campos vacíos
       if (Object.values(this.loginForm.value).some(val => !val)) {
         this.mostrarError('Aún faltan campos por completar.');
-      } 
+      } else {
+        this.mostrarErroresFormulario();
+      }
       return;
     }
 
