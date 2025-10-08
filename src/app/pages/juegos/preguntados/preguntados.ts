@@ -233,6 +233,7 @@ export class Preguntados implements OnInit, OnDestroy {
     this.juegoActivo = false;
     this.juegoTerminado = true;
     this.botonesBloqueados = true;
+    const cantidadPreguntas = this.indicePregunta;
 
     const endTime = Date.now();
     const duracionSegundos = Math.floor((endTime - this.startTime) / 1000);
@@ -244,7 +245,9 @@ export class Preguntados implements OnInit, OnDestroy {
     const guardadoExitoso = await this.juegoService.guardarResultadoPreguntados(
       this.usuario?.nombre,
       this.aciertos,
-      duracionSegundos
+      duracionSegundos,
+      this.preguntasFallidas,
+      cantidadPreguntas
     );
 
     if (guardadoExitoso) {

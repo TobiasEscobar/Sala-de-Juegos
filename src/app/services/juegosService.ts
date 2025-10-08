@@ -94,6 +94,8 @@ export class JuegosService {
         nombre: string,
         aciertos: number,
         tiempo_jugado: number,
+        preguntas_fallidas: number,
+        cantidad_preguntas: number
         ) {
         const { data, error } = await this.supabaseService.supabase
         .from('rankings')
@@ -102,7 +104,7 @@ export class JuegosService {
             puntos: aciertos, // Se guarda en puntos pero se muestra como aciertos, es solamente visual
             tiempo_jugado,
             fecha: new Date().toISOString(),
-            datos_extras: null,
+            datos_extras: { preguntas_fallidas, cantidad_preguntas },
             juego: 'preguntados',
             tipo: 'acierto'
         }]);
