@@ -5,22 +5,44 @@
     </div>
 
     <div class="chat-mensajes flex-grow-1 p-2 overflow-auto">
+        @if (mensajes().length === 0) {
+            <div class="text-center text-muted p-3">
+                No hay mensajes aún. ¡Sé el primero en escribir!
+            </div>
+        }
+        
         @for (m of mensajes(); track m.id) {
-        <div [class.mi-mensaje]="m.usuario === usuarioActual" 
-            [class.otro-mensaje]="m.usuario !== usuarioActual"
-            class="mb-2 p-2 rounded">
-            <div class="fw-bold">{{ m.usuario }}</div>
-            <div>{{ m.mensaje }}</div>
-            <small class="text-muted">{{ m.fecha | date:'shortTime' }}</small>
-        </div>
+            <div [class.mi-mensaje]="m.usuario === usuarioActual" 
+                [class.otro-mensaje]="m.usuario !== usuarioActual"
+                class="mensaje-item mb-2 p-2 rounded">
+                <div class="fw-bold">{{ m.usuario }}</div>
+                <div>{{ m.mensaje }}</div>
+                <small class="text-muted">{{ m.fecha | date:'short' }}</small>
+            </div>
         }
     </div>
 
     <div class="chat-input d-flex p-2">
-        <input [(ngModel)]="nuevoMensaje" 
-            (keyup.enter)="enviar()" 
-            class="form-control me-2" 
-            placeholder="Escribe un mensaje..." />
-        <button class="btn btn-primary" (click)="enviar()">Enviar</button>
+        @if (usuarioActual) {
+            <input [(ngModel)]="nuevoMensaje" 
+                    (keyup.enter)="enviar()" 
+                    class="form-control me-2" 
+                    placeholder="Escribe un mensaje..."
+                    maxlength="80"
+                    [disabled]="!usuarioActual || enviandoMensaje" />
+                    <small class="text-muted ms-1">
+                    {{ nuevoMensaje.length }}/80
+                    </small>
+            <button class="btn btn-primary" 
+                    (click)="enviar()"
+                    [disabled]="!nuevoMensaje.trim() || !usuarioActual || enviandoMensaje">
+                {{ enviandoMensaje ? 'Enviando...' : 'Enviar' }}
+            </button>
+
+        } @else {
+            <div class="alert alert-info w-100 mb-0">
+                Debes iniciar sesión para enviar mensajes
+            </div>
+        }
     </div>
 </div>

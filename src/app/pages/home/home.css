@@ -1,8 +1,8 @@
-.container-total {
+/* .container-total {
     background-image: url('/background3.jpg');
-    background-size: cover; /* Ajusta la imagen para cubrir todo el espacio disponible */
-    background-position: center; /* Centra la imagen dentro del elemento */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
 }
 
 .container-bienvenida p {
@@ -46,18 +46,17 @@
     
     height: auto;
     padding-top: 10px;
-    max-height: 160px; /* limita la altura de la imagen dentro de la tarjeta */
-    object-fit: contain; /* no distorsiona la imagen */
+    max-height: 160px; 
+    object-fit: contain; 
 }
 
 .juego-body-card {
     color: #fff;
     padding: 15px;
     text-align: center;
-    /* flex-grow: 1; para que el cuerpo ocupe el espacio disponible */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* mantiene botones abajo */
+    justify-content: space-between; 
 }
 
 .boton-primario {
@@ -87,4 +86,168 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
+} */
+
+.container-total {
+    background-image: url('/background3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    padding-bottom: 70px;
+}
+
+.container-bienvenida {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    }
+
+.title-bienvenida {
+    color: #fff;
+    font-size: 2.5em;
+}
+
+#p-bienvenida {
+    font-size: 1.2em;
+    color: #fff;
+}
+
+.title {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 2em;
+    color: #fff;
+    text-shadow: 1px 1px 5px #ff00ea;
+}
+
+/* Tarjetas de juegos */
+.juego-card {
+    width: 350px;
+    height: 380px;
+    border-radius: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #1a0033, #3a0ca3);
+    transition: transform 0.2s ease;
+}
+
+.juego-card:hover {
+    transform: scale(1.03);
+}
+
+.img-juego {
+    max-height: 160px;
+    object-fit: contain;
+    margin-top: 10px;
+}
+
+.juego-body-card {
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.boton-primario {
+    background-color: #c40bb4;
+    border-radius: 15px;
+    color: black;
+    font-weight: bold;
+}
+
+.boton-primario:hover {
+    background-color: #e879f9;
+    color: white;
+}
+
+.boton-secundario {
+    background-color: #00d9ff;
+    border-radius: 15px;
+    color: black;
+    font-weight: bold;
+}
+
+.boton-secundario:hover {
+    background-color: #11b9d6;
+    color: white;
+}
+
+/* Botón de chat */
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* 🌙 RESPONSIVE DESIGN */
+@media (max-width: 992px) {
+    .juego-card {
+        width: 300px;
+        height: auto;
+    }
+
+    .title-bienvenida {
+        font-size: 2em;
+    }
+
+    #p-bienvenida {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.5em;
+    }
+
+    .title-bienvenida {
+        font-size: 1.8em;
+    }
+
+    .juego-card {
+        width: 90%;
+        height: auto;
+    }
+
+    .img-juego {
+        max-height: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.3em;
+    }
+
+    .title-bienvenida {
+        font-size: 1.5em;
+    }
+
+    .container-bienvenida {
+        padding: 15px;
+    }
+
+    #p-bienvenida {
+        font-size: 0.9em;
+    }
+
+    .juego-card {
+        width: 100%;
+        border-radius: 20px;
+    }
+
+    .img-juego {
+        max-height: 110px;
+    }
+
+    .chat-toggle {
+        bottom: 15px;
+        right: 15px;
+    }
 }

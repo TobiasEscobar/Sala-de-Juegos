@@ -1,3 +1,12 @@
+.container-total {
+    background-image: url('/background3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    padding-bottom: 10px;
+}
+
 .card-bio {
     background-color: #1a1a1a; 
     color: #f1f1f1;            
@@ -39,11 +48,38 @@
     background-color: #1a1a1a; 
     color: #f1f1f1;            
     border-radius: 15px;       
-    padding: 20px;
+    padding: 10px;
 }
 
 .titulo-juego{
     text-align: center;
     padding-bottom: 30px;
     font-size: 2em;
+}
+
+.subtitulo-juego {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #18e0e7;
+    text-shadow: 0 0 8px #18e0e7;
+}
+
+.lista-juego {
+    list-style: none;
+    text-align: center;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.lista-juego li {
+    margin: 5px 0;
+    font-size: 1.1rem;
+}
+
+.bonus {
+    color: #00ffc3;
+    font-weight: bold;
+    text-shadow: 0 0 8px #00ffc3;
 }

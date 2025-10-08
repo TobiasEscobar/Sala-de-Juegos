@@ -91,7 +91,7 @@ export class AuthService {
      * @param password Contraseña
      * @returns La respuesta del wrapper de Supabase (session/user)
      */
-    const data = await this.supabaseService.login(email, password); // <-- usa tu wrapper
+    const data = await this.supabaseService.login(email, password); 
     await this.loadUserFromSession(); // actualizar currentUserSubject
     return data;
   }

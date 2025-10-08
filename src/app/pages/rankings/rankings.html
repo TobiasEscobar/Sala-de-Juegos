@@ -1,41 +1,120 @@
-<div >
-    <div class="container min-vh-100"> 
-        <div class="p-5">
-            <div class="bg-dark p-5 text-white rounded shadow-lg d-flex flex-column" style="min-height: 100%;">
-                
-                <h1  style="color:rgb(140, 4, 145)"class="display-3 fw-bold  text-center my-5">RANKING {{rankingActual.toUpperCase()}}</h1>
+<section class="container my-5" >
+    <div class="bg-dark p-5 text-white  d-flex flex-column container-total">
+        
+        <h1 style="color:rgb(140, 4, 145)" class="display-4 fw-bold text-center my-4">
+            RANKING {{ getNombreJuego(juegoActual()) }}
+        </h1>
 
-                <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap">
-                    <button [disabled]="rankingActual==='ahorcado'"(click)="traerRanking('puntuacion','ahorcado')"class="btn btn-ranking-tab text-xbox-white ">Ahorcado</button>
-                    <button [disabled]="rankingActual==='mayor_menor'"(click)="traerRanking('acierto','mayor_o_menor')"class="btn btn-ranking-tab text-xbox-white">Mayor Menor</button>
-                    <button [disabled]="rankingActual==='preguntados'"(click)="traerRanking('acierto','preguntados')"class="btn btn-ranking-tab text-xbox-white">Preguntados</button>
-                    <button [disabled]="rankingActual==='1024'"(click)="traerRanking('puntuacion','juego_1024')"class="btn btn-ranking-tab text-xbox-white">1024</button>
-                </div>
-
-                <div class="fs-4 row bg-xbox-green rounded py-2 text-dark fw-bold border-bottom border-black">
-                <div class="col text-center">POSICIÓN</div>
-                <div class="col text-center">NOMBRE</div>
-                <div class="col text-center">{{ tipoPuntuacion ? 'PUNTUACION' : 'ACIERTOS' }}</div>
-
-                </div>
-
-                @for (r of ranking(); let i = $index; track r.id) {
-                    <div class="row py-3 border-bottom fs-5 ">
-                    <div class="col text-center">{{ i + 1 }}</div>
-                    <div class="col text-center">{{ r.nombre }}</div>
-                    @if(tipoPuntuacion)
-                    {
-                        <div class="col text-center">{{ r.puntos }}</div>
-                    }
-                    @else {
-                        <div class="col text-center">{{ r.aciertos }}</div>
-                    }
-                    </div>
-                }
-
-            </div>
+        <!-- Botones de selección de juego -->
+        <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+            <button 
+                [disabled]="juegoActual() === 'ahorcado'"
+                (click)="traerRanking('ahorcado')"
+                class="btn btn-ranking-tab text-xbox-white">
+                Ahorcado
+            </button>
+            <button 
+                [disabled]="juegoActual() === 'mayor_o_menor'"
+                (click)="traerRanking('mayor_o_menor')"
+                class="btn btn-ranking-tab text-xbox-white">
+                Mayor Menor
+            </button>
+            <button 
+                [disabled]="juegoActual() === 'preguntados'"
+                (click)="traerRanking('preguntados')"
+                class="btn btn-ranking-tab text-xbox-white">
+                Preguntados
+            </button>
+            <button 
+                [disabled]="juegoActual() === 'juego_propio'"
+                (click)="traerRanking('juego_propio')"
+                class="btn btn-ranking-tab text-xbox-white">
+                1024
+            </button>
         </div>
-        <button class="btn btn-warning" (click)="volverHome()">Volver</button>
+
+        <!-- Botones de ordenamiento -->
+        <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+            <button 
+                [class.active]="ordenActual() === 'puntos_desc'"
+                (click)="cambiarOrden('puntos_desc')"
+                class="btn btn-sm btn-orden">
+                <i class="bi bi-trophy-fill me-1"></i>
+                Mejor Puntaje
+            </button>
+            <button 
+                [class.active]="ordenActual() === 'tiempo_asc'"
+                (click)="cambiarOrden('tiempo_asc')"
+                class="btn btn-sm btn-orden">
+                <i class="bi bi-clock-fill me-1"></i>
+                Mejor Tiempo
+            </button>
+            <button 
+                [class.active]="ordenActual() === 'fecha_desc'"
+                (click)="cambiarOrden('fecha_desc')"
+                class="btn btn-sm btn-orden">
+                <i class="bi bi-calendar-fill me-1"></i>
+                Más Reciente
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-bordered tabla-ranking">
+                <thead>
+                    <tr class="bg-xbox-green text-dark fw-bold">
+                        <th class="text-center py-3">POS</th>
+                        <th class="text-center py-3">NOMBRE</th>
+                        <th class="text-center py-3">
+                            {{ esAciertos() ? 'ACIERTOS' : 'PUNTOS' }}
+                            @if(ordenActual() === 'puntos_desc' || ordenActual() === 'tiempo_asc') {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </th>
+                        <th class="text-center py-3">
+                            TIEMPO
+                            @if(ordenActual() === 'tiempo_asc') {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                        </th>
+                        <th class="text-center py-3">
+                            FECHA
+                            @if(ordenActual() === 'fecha_desc') {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ranking().length === 0) {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                No hay registros para este juego
+                            </td>
+                        </tr>
+                    }
+                    @for (r of ranking(); let i = $index; track r.id) {
+                        <tr class="ranking-row" [appResaltarPosicion]="i">
+                            <td class="text-center py-3 fw-bold">
+                                @if(i === 0) {
+                                    <span class="medalla">🥇</span>
+                                } @else if(i === 1) {
+                                    <span class="medalla">🥈</span>
+                                } @else if(i === 2) {
+                                    <span class="medalla">🥉</span>
+                                } @else {
+                                    {{ i + 1 }}
+                                }
+                            </td>
+                            <td class="text-center py-3">{{ r.nombre }}</td>
+                            <td class="text-center py-3 fw-bold text-warning">{{ r.puntos }}</td>
+                            <td class="text-center py-3">{{ r.tiempo_jugado | formatearTiempo }}</td>
+                            <td class="text-center py-3">{{ formatearFecha(r.fecha) }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+</section>
+
 

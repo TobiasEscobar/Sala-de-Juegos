@@ -35,7 +35,7 @@ export class Registro {
       nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
       apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
-      edad: ['', [Validators.required, Validators.pattern(/^[0-9]$/), Validators.maxLength(2), Validators.min(8), Validators.max(99)]],
+      edad: ['', [Validators.required, Validators.pattern(/^[0-9]{1,2}$/), Validators.min(8), Validators.max(99)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       passwordConfirm: ['', [Validators.required, Validators.minLength(6)]]
     }, { validators: passwordMatchValidator });

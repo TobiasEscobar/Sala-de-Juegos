@@ -1,3 +1,83 @@
 .texto{
     color: #fff;
 }
+
+.botonera {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 botones por fila */
+    gap: 10px;
+    justify-items: center; /* centra los botones en cada celda */
+    margin: 0 auto;
+    max-width: 500px; /* opcional: limita el ancho total */
+}
+
+.botonera button {
+    width: 60px;
+    height: 50px;
+    font-size: 1.2rem;
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* 💡 MODO RESPONSIVE */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .texto {
+        font-size: 1.4rem;
+        letter-spacing: 6px;
+    }
+
+    .card-text {
+        font-size: 1.2rem;
+        }
+
+    .botonera {
+        grid-template-columns: repeat(4, 1fr); /* 4 letras por fila en tablets y celulares */
+        gap: 8px;
+        max-width: 400px;
+    }
+
+    .botonera button {
+        width: 50px;
+        height: 45px;
+        font-size: 1rem;
+    }
+
+    button.btn {
+        min-width: 100px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .texto {
+        font-size: 1.2rem;
+        letter-spacing: 4px;
+    }
+
+    .botonera {
+        grid-template-columns: repeat(3, 1fr); /* 3 letras por fila en pantallas muy chicas */
+        gap: 6px;
+    }
+
+    .botonera button {
+        width: 45px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    button.btn {
+        min-width: 90px;
+        font-size: 0.9rem;
+    }
+}

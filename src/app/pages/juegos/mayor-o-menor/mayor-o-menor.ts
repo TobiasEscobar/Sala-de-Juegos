@@ -8,6 +8,9 @@ import { JuegosDialog } from '../../../dialogs/juegos-dialog/juegos-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+import Swal from 'sweetalert2';
+import { FormatearTiempoPipe } from '../../../pipes/formatear-tiempo-pipe-pipe';
+
 interface Carta {
   id: number;
   nombre: string;
@@ -18,19 +21,24 @@ interface Carta {
 
 @Component({
   selector: 'app-mayor-o-menor',
-  imports: [],
+  imports: [FormatearTiempoPipe],
   templateUrl: './mayor-o-menor.html',
   styleUrl: './mayor-o-menor.css'
 })
 export class MayorOMenor implements OnInit, OnDestroy {
   
   //Logica juego
-  juegoActivo = true;
+  juegoActivo = false;
+  juegoTerminado = false;
   intentosFallidos = 0;
   aciertos = 0;
   vidas = 3;
   maxAciertos = 10;
   resultadoPartida = '';
+
+  intervaloTemporizador: any;
+  startTime!: number;
+  tiempoRestante = 10;
 
   //Cartas
   mazo: Carta[] = [];
@@ -68,7 +76,7 @@ export class MayorOMenor implements OnInit, OnDestroy {
   //Logica juego
   empezar() {
     // Funcion que se activa al clickear en el boton de jugar. Activa la logica del juego
-    this.empezarJuego = true;   
+    this.empezarJuego = true;
     this.iniciarJuego();       
   }
 
@@ -77,6 +85,9 @@ export class MayorOMenor implements OnInit, OnDestroy {
     this.aciertos = 0;
     this.vidas = 3;
     this.juegoActivo = true;
+    this.juegoTerminado = false;
+    this.tiempoRestante = 10;
+    this.startTime = Date.now();
 
     // cargar cartas
     const { data, error }: any = await this.juegoService.cargarCartas();
@@ -87,8 +98,27 @@ export class MayorOMenor implements OnInit, OnDestroy {
 
     this.mazo = this.mezclarCartas(data);
     this.cartaActual = this.mazo.shift() || null;
-
+    this.iniciarTemporizador();
     this.cdr.detectChanges(); 
+  }
+
+  iniciarTemporizador() {
+    this.detenerTemporizador();
+    this.intervaloTemporizador = setInterval(() => {
+      if (!this.juegoActivo) return;
+      this.tiempoRestante--;
+      if (this.tiempoRestante <= 0) {
+        this.finalizarJuego(false);
+      }
+      this.cdr.detectChanges();
+    }, 1000);
+  }
+
+  detenerTemporizador() {
+    if (this.intervaloTemporizador) {
+      clearInterval(this.intervaloTemporizador);
+      this.intervaloTemporizador = null;
+    }
   }
 
   mezclarCartas(cartas: Carta[]): Carta[] {
@@ -126,25 +156,24 @@ export class MayorOMenor implements OnInit, OnDestroy {
   }
 
   async finalizarJuego(resultado: boolean) {
-    const tipo = 'acierto';
+    this.juegoTerminado = true;
+    this.juegoActivo = false;
+
+    const endTime = Date.now();
+    const duracionSegundos = Math.floor((endTime - this.startTime) / 1000);
 
     if (resultado)  {
       this.resultadoPartida = "Ganó";
     } else {
       this.resultadoPartida = "Perdió"
     }
-    const datos = {
-      usuario: this.usuario?.nombre,
-      aciertos: this.aciertos,
-      resultado: this.resultadoPartida,
-      intentos: this.intentosFallidos,
-      fecha: new Date().toISOString()
-    };
 
     const guardadoExitoso = await this.juegoService.guardarResultadoMayorMenor(
       this.usuario?.nombre,
       this.aciertos,
-      tipo 
+      duracionSegundos,
+      this.resultadoPartida,
+      this.intentosFallidos,
     );
 
     if (guardadoExitoso) {
@@ -162,8 +191,46 @@ export class MayorOMenor implements OnInit, OnDestroy {
     });
   }
 
+  reiniciarJuego() {
+    Swal.fire({
+      title: '¿Reiniciar juego?',
+      text: 'Se perderá tu progreso actual',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ffc107',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, reiniciar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.detenerTemporizador();
+        this.aciertos = 0;
+        this.vidas = 3;
+        this.iniciarJuego();
+      }
+    });
+  }
+
   volverHome() {
-    this.router.navigate(['/home']);
+    if (this.juegoActivo && !this.juegoTerminado) {
+      Swal.fire({
+        title: '¿Salir del juego?',
+        text: 'Se perderá tu progreso actual',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, salir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.detenerTemporizador();
+          this.router.navigate(['/home']);
+        }
+      });
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
 }

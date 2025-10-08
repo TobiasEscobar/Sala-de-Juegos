@@ -1,0 +1,104 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.bg-xbox-green {
+  background-color: #107c10;
+  color: white;
+}
+
+.bg-xbox-green:hover {
+  background-color: #0d6b0d;
+  color: white;
+}
+
+.btn-lg {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.text-danger {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.alert {
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+
+.badge {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+h2 {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.card {
+  border: none;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-body p {
+  margin-bottom: 0.5rem;
+  font-size: 10rem;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-secondary {
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+  
+  .btn-lg {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}

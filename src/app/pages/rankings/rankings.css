@@ -1,0 +1,150 @@
+.container-total{
+    border: 2px solid #18e0e7;
+    transition: all 0.3s ease-in-out; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.container-total:hover{
+    transform: translateY(-7px);    /* Sube un poco */
+    box-shadow: 0 12px 25px rgba(255, 255, 255, 0.6); /* Sombra más intensa */
+    transition: all 0.3s ease;
+}
+
+
+.tabla-ranking {
+    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #444;
+}
+
+.tabla-ranking thead th {
+    border: 2px solid #000;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.tabla-ranking tbody td {
+    border: 1px solid #555;
+    vertical-align: middle;
+}
+
+.ranking-row {
+    transition: all 0.2s ease;
+}
+
+.tabla-ranking tbody tr.ranking-row:hover,
+.tabla-ranking tbody tr.ranking-row:hover td {
+    background-color: rgba(140, 4, 145, 0.35) !important;
+}
+
+/* Estilos para el podio - aplicados por la directiva */
+/* sobrescribir Bootstrap */
+.tabla-ranking tbody tr.ranking-row.posicion-oro,
+.tabla-ranking tbody tr.ranking-row.posicion-oro td {
+    background-color: rgba(255, 215, 0, 0.2) !important;
+}
+
+.tabla-ranking tbody tr.ranking-row.posicion-oro {
+    border-left: 4px solid gold !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
+}
+
+.tabla-ranking tbody tr.ranking-row.posicion-plata,
+.tabla-ranking tbody tr.ranking-row.posicion-plata td {
+    background-color: rgba(192, 192, 192, 0.2) !important;
+}
+
+.tabla-ranking tbody tr.ranking-row.posicion-plata {
+    border-left: 4px solid silver !important;
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.5) !important;
+}
+
+.tabla-ranking tbody tr.ranking-row.posicion-bronce,
+.tabla-ranking tbody tr.ranking-row.posicion-bronce td {
+    background-color: rgba(205, 127, 50, 0.2) !important;
+}
+
+.tabla-ranking tbody tr.ranking-row.posicion-bronce {
+    border-left: 4px solid #cd7f32 !important;
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.5) !important;
+}
+
+/* Animación para posiciones del podio */
+.podium-position {
+    animation: podiumShine 3s ease-in-out infinite;
+}
+
+@keyframes podiumShine {
+    0%, 100% { 
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); 
+    }
+    50% { 
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); 
+    }
+}
+
+.medalla {
+    font-size: 1.4rem;
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgb(140, 4, 145);
+    border-radius: 5px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: rgb(180, 4, 185);
+}
+
+/* Botones de ordenamiento */
+.btn-orden {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 2px solid #555;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-orden:hover {
+    background-color: rgba(140, 4, 145, 0.3);
+    border-color: rgb(140, 4, 145);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-orden.active {
+    background-color: rgb(140, 4, 145);
+    border-color: rgb(140, 4, 145);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(140, 4, 145, 0.5);
+}
+
+.btn-orden i {
+    font-size: 0.85rem;
+}

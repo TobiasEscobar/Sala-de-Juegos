@@ -12,6 +12,7 @@ import { User } from '../../clases/user';
 export class Nav implements OnInit {
   isLogged : boolean = false;
   currentUser: User | null = null;
+  menuAbierto = false;
 
   constructor(private authService: AuthService) {}
 
@@ -25,5 +26,9 @@ export class Nav implements OnInit {
 
   logout() {
     this.authService.signOut();
+  }
+
+  cerrarMenu() {
+    this.menuAbierto = false;
   }
 }

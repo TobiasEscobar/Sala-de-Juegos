@@ -1,12 +1,56 @@
 <div class="container py-4 text-center">
 
     <!-- Info del jugador -->
-    <div class="card bg-dark text-white mb-4">
-        <div class="card-body">
-        <p><strong>Jugador:</strong> {{ usuario?.nombre }}</p>
-        <p><strong>Puntos:</strong> {{ aciertos }} / {{ maxAciertos }}</p>
-        <p><strong>Vidas:</strong> {{ vidas }}</p>
-        <p><strong>Fallidos:</strong> {{ intentosFallidos }}</p>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">👤 Jugador</h5>
+                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⭐ Aciertos</h5>
+                    <p class="card-text fs-4 text-success">{{ aciertos }} / {{ maxAciertos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">❌ Fallidos</h5>
+                    <p class="card-text fs-4 text-warning">{{ intentosFallidos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">❤ Vidas</h5>
+                    <p class="card-text fs-4" >
+                        {{ vidas }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⏳ Tiempo</h5>
+                    <p class="card-text fs-4" 
+                        [class.text-danger]="tiempoRestante < 60"
+                        [class.text-warning]="tiempoRestante >= 60">
+                        {{ tiempoRestante | formatearTiempo }}
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -24,20 +68,23 @@
     </div>
 
     <!-- Botones de elección -->
-    @if (juegoActivo) {
+    @if (!empezarJuego) {
+        <p class="text-xbox-white">Toque en el boton de jugar para empezar</p>
+    } @else {
         <div class="d-flex justify-content-center gap-3 mb-4">
-        <button (click)="elegir('mayor')" class="btn btn-success btn-lg">Mayor</button>
-        <button (click)="elegir('menor')" class="btn btn-danger btn-lg">Menor</button>
+            <button (click)="elegir('mayor')" class="btn btn-success btn-lg">Mayor</button>
+            <button (click)="elegir('menor')" class="btn btn-danger btn-lg">Menor</button>
         </div>
     }
 
     <!-- Botón volver -->
     <div class="d-flex justify-content-center gap-3">
         @if(!empezarJuego){
-            <button class="btn btn-warning btn-lg" (click)="empezar()">Jugar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+            <button class="btn btn-warning btn-lg" (click)="empezar()">▶ Jugar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
         } @else {
-            <button class="btn bg-xbox-green" (click)="volverHome()">Volver</button>
+            <button class="btn bg-xbox-green" (click)="reiniciarJuego()">🔄 Reiniciar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
         }
 
     </div>

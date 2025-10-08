@@ -1,3 +1,24 @@
-.nav-item {
-    color: #3383ce; /* efecto hover opcional */
+/* .nav-item {
+    color: #3383ce; 
+} */
+
+/* Navbar default (Bootstrap ya maneja casi todo) */
+.navbar-brand {
+    font-weight: bold;
+    color: #bd20e4 !important;
+}
+
+/* Cuando se despliega en modo celular */
+.navbar-collapse {
+    background-color: #111;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* En pantallas grandes: mantener diseño original */
+@media (min-width: 992px) {
+    .navbar-collapse {
+        background: none;
+        padding: 0;
+    }
 }

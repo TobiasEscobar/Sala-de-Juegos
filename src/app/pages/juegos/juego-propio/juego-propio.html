@@ -1,1 +1,118 @@
-<p>juego-propio works!</p>
+<div class="container text-center mt-4">
+
+    <h1 class="mb-4 text-primary">🎮 Juego 1024</h1>
+
+    <!-- Info del juego -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">👤 Jugador</h5>
+                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⏳ Tiempo</h5>
+                    <p class="card-text fs-4" 
+                        [class.text-danger]="tiempoRestante < 60"
+                        [class.text-warning]="tiempoRestante >= 60">
+                        {{ (tiempoRestante$ | async)! | formatearTiempo }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">⭐ Puntuación</h5>
+                    <p class="card-text fs-4 text-success">{{ puntuacion }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🎯 Objetivo</h5>
+                    <p class="card-text fs-4 text-info">1024</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(!empezarJuego){
+        <p class="text-muted mb-4">Toque en el botón de jugar para empezar</p>
+        <p class="text-secondary">Usa las flechas del teclado o los botones para mover las fichas</p>
+        <p class="text-secondary">Combina números iguales para llegar a 1024</p>
+    } @else {
+        <!-- Tablero del juego -->
+        <div class="board-container mb-4">
+            <div class="board">
+                @for (fila of tablero; track fila) {
+                    <div class="row-board">
+                        @for (celda of fila; track celda.id) {
+                            <div 
+                                class="cell" 
+                                [class.nueva]="celda.esNueva"
+                                [class.fusionada]="celda.seFusiono"
+                                [class.vacia]="celda.valor === 0"
+                                [style.background-color]="obtenerColorCelda(celda.valor)"
+                                [style.color]="obtenerColorTexto(celda.valor)">
+                                {{ celda.valor !== 0 ? celda.valor : '' }}
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Controles de dirección -->
+        <div class="controls mb-4">
+            <div class="controls-row">
+                <button 
+                    class="btn btn-outline-primary btn-control" 
+                    (click)="mover('arriba')" 
+                    [disabled]="juegoTerminado || !juegoActivo">
+                    ⬆️
+                </button>
+            </div>
+            <div class="controls-row">
+                <button 
+                    class="btn btn-outline-primary btn-control" 
+                    (click)="mover('izquierda')" 
+                    [disabled]="juegoTerminado || !juegoActivo">
+                    ⬅️
+                </button>
+                <button 
+                    class="btn btn-outline-primary btn-control" 
+                    (click)="mover('abajo')" 
+                    [disabled]="juegoTerminado || !juegoActivo">
+                    ⬇️
+                </button>
+                <button 
+                    class="btn btn-outline-primary btn-control" 
+                    (click)="mover('derecha')" 
+                    [disabled]="juegoTerminado || !juegoActivo">
+                    ➡️
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- Botones de control del juego -->
+    <div class="d-flex justify-content-center gap-3">
+        @if(!empezarJuego){
+            <button class="btn btn-warning btn-lg" (click)="empezar()">▶ Jugar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
+        } @else {
+            <button class="btn btn-warning btn-lg" (click)="reiniciarJuego()">🔄 Reiniciar</button>
+            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
+        }
+    </div>
+
+</div>

@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-ahorcado',
   standalone: true,
@@ -29,7 +31,8 @@ export class Ahorcado implements OnInit, OnDestroy {
   
   //Logica juego
   intentosFallidos = 0;
-  juegoActivo = true;
+  juegoActivo = false;
+  juegoTerminado = false;
   palabraElegida: string = this.seleccionarPalabraRandom();
   puntos = 0;
 
@@ -80,15 +83,9 @@ export class Ahorcado implements OnInit, OnDestroy {
     this.letrasUsadasContador = [];
     this.startTime = Date.now();
     this.juegoActivo = true;
+    this.juegoTerminado = false;
 
     this.startTimer();
-  }
-
-  reiniciarJuego() {
-    this.stopTimer();
-    this.startTimer();
-    this.puntos = 0;
-    this.iniciarJuego();
   }
 
   get imagenActual(): string {
@@ -127,6 +124,7 @@ export class Ahorcado implements OnInit, OnDestroy {
   seleccionarLetra(letra: string) {
     letra = letra.toLowerCase();
     // si ya se usó, no hace nada
+    console.log(this.palabraElegida);
     if (this.letrasUsadas.includes(letra)) return;
 
     this.letrasUsadas.push(letra);
@@ -165,8 +163,9 @@ export class Ahorcado implements OnInit, OnDestroy {
   }
 
   async finalizarJuego(resultado: string) {
+    this.juegoTerminado = true;
+    this.juegoActivo = false;
     this.stopTimer();
-    const tipo = 'puntuacion';
     const endTime = Date.now();
     const duracionSegundos = Math.floor((endTime - this.startTime) / 1000);
 
@@ -174,8 +173,7 @@ export class Ahorcado implements OnInit, OnDestroy {
       this.usuario?.nombre,
       this.puntos,
       duracionSegundos,
-      this.letrasUsadasContador.length,
-      tipo 
+      this.letrasUsadasContador.length
     );
 
     if (guardadoExitoso) {
@@ -193,8 +191,46 @@ export class Ahorcado implements OnInit, OnDestroy {
     });
   }
 
-  volverHome(){
-    this.router.navigate(['/home']);
+  reiniciarJuego() {
+    Swal.fire({
+      title: '¿Reiniciar juego?',
+      text: 'Se perderá tu progreso actual',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ffc107',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, reiniciar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.stopTimer();
+        this.startTimer();
+        this.puntos = 0;
+        this.iniciarJuego();
+      }
+    });
+  }
+
+  volverHome() {
+    if (this.juegoActivo && !this.juegoTerminado) {
+      Swal.fire({
+        title: '¿Salir del juego?',
+        text: 'Se perderá tu progreso actual',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, salir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.stopTimer();
+          this.router.navigate(['/home']);
+        }
+      });
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
 }

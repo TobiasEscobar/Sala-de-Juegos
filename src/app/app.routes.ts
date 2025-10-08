@@ -1,29 +1,61 @@
 import { Routes } from '@angular/router';
-import { Login } from './pages/login/login';
 import { Home } from './pages/home/home';
-import { QuienSoy } from './pages/quien-soy/quien-soy';
-import { Registro } from './pages/registro/registro';
-import { NotFound } from './components/not-found/not-found';
-//Juegos
-import { Ahorcado } from './pages/juegos/ahorcado/ahorcado';
-import { MayorOMenor } from './pages/juegos/mayor-o-menor/mayor-o-menor';
-import { Preguntados } from './pages/juegos/preguntados/preguntados';
-import { JuegoPropio } from './pages/juegos/juego-propio/juego-propio';
 import { loginGuard } from './guards/login-guard';
 import { registerGuard } from './guards/register-guard';
-import { Rankings } from './pages/rankings/rankings';
 
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: 'home', component: Home },
-    { path: 'login', component: Login, canActivate: [registerGuard] },
-    { path: 'quien-soy', component: QuienSoy },
-    { path: 'registro', component: Registro, canActivate: [registerGuard] },
-    { path: 'ahorcado', component: Ahorcado, canActivate: [loginGuard] },
-    { path: 'mayor-o-menor', component: MayorOMenor, canActivate: [loginGuard] },
-    { path: 'preguntados', component: Preguntados, canActivate: [loginGuard] },
-    { path: '1024', component: JuegoPropio, canActivate: [loginGuard] },
-    { path: 'ranking', component: Rankings, canActivate: [loginGuard] },
-    { path: '**', redirectTo: '/home', pathMatch: 'full'}
+    { 
+        path: '', 
+        redirectTo: '/home', 
+        pathMatch: 'full' 
+    },
+    { 
+        path: 'home', 
+        component: Home // Sin lazy loading - carga inmediata
+    },
+    { 
+        path: 'login', 
+        loadComponent: () => import('./pages/login/login').then(m => m.Login),
+        canActivate: [registerGuard] 
+    },
+    { 
+        path: 'quien-soy', 
+        loadComponent: () => import('./pages/quien-soy/quien-soy').then(m => m.QuienSoy)
+    },
+    { 
+        path: 'registro', 
+        loadComponent: () => import('./pages/registro/registro').then(m => m.Registro),
+        canActivate: [registerGuard] 
+    },
+    { 
+        path: 'ahorcado', 
+        loadComponent: () => import('./pages/juegos/ahorcado/ahorcado').then(m => m.Ahorcado),
+        canActivate: [loginGuard] 
+    },
+    { 
+        path: 'mayor-o-menor', 
+        loadComponent: () => import('./pages/juegos/mayor-o-menor/mayor-o-menor').then(m => m.MayorOMenor),
+        canActivate: [loginGuard] 
+    },
+    { 
+        path: 'preguntados', 
+        loadComponent: () => import('./pages/juegos/preguntados/preguntados').then(m => m.Preguntados),
+        canActivate: [loginGuard] 
+    },
+    { 
+        path: '1024', 
+        loadComponent: () => import('./pages/juegos/juego-propio/juego-propio').then(m => m.JuegoPropio),
+        canActivate: [loginGuard] 
+    },
+    { 
+        path: 'rankings', 
+        loadComponent: () => import('./pages/rankings/rankings').then(m => m.Rankings),
+        canActivate: [loginGuard] 
+    },
+    { 
+        path: '**', 
+        redirectTo: '/home', 
+        pathMatch: 'full'
+    }
 ];
