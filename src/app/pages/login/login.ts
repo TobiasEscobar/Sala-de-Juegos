@@ -92,7 +92,7 @@ export class Login {
         this.loginForm.setValue({ email: 'sofiaschettino@gmail.com', password: 'usuario123' });
         break;
       case "emailSimba":
-        this.loginForm.setValue({ email: 'milka-simba@gmail.com', password: 'contraseñaSegura'});
+        this.loginForm.setValue({ email: 'tercerusuario@gmail.com', password: 'contraseñaSegura2'});
         break;
       default:
         console.log("Hubo un error");
