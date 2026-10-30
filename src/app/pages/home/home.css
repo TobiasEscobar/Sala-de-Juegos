@@ -1,7 +1,3 @@
-/* ==========================================================================
-   🎮 SALA DE JUEGOS - PÁGINA DE INICIO (HOME) - ESTILOS GAMING Y MODERNOS
-   ========================================================================== */
-
 .home-wrapper {
     background-image: 
         radial-gradient(circle at 15% 20%, rgba(196, 11, 180, 0.22) 0%, transparent 45%),
@@ -17,10 +13,6 @@
     color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-
-/* ==========================================================================
-   🌟 HERO BANNER DE BIENVENIDA
-   ========================================================================== */
 
 .hero-banner {
     background: rgba(18, 8, 34, 0.75);
@@ -69,14 +61,8 @@
 }
 
 @keyframes pulseGlow {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.4;
-        transform: scale(1.3);
-    }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
 }
 
 .hero-title {
@@ -107,7 +93,6 @@
     font-weight: 700;
 }
 
-/* Botones Hero */
 .btn-hero-primary {
     background: linear-gradient(135deg, #c40bb4, #7928ca);
     color: #ffffff;
@@ -150,14 +135,6 @@
     box-shadow: 0 6px 20px rgba(0, 217, 255, 0.45);
 }
 
-.btn-icon {
-    font-size: 1.15rem;
-}
-
-/* ==========================================================================
-   🕹️ SECCIONES Y CABECERAS
-   ========================================================================== */
-
 .section-tag {
     display: inline-block;
     color: #c40bb4;
@@ -187,10 +164,6 @@
     max-width: 600px;
     margin: 0 auto;
 }
-
-/* ==========================================================================
-   🃏 TARJETAS DE JUEGOS CLÁSICOS (GAME CARDS)
-   ========================================================================== */
 
 .game-card {
     background: rgba(22, 10, 38, 0.85);
@@ -257,7 +230,6 @@
     color: #ffb703;
 }
 
-/* Imagen del juego */
 .game-image-wrapper {
     position: relative;
     width: 100%;
@@ -297,7 +269,6 @@
     transform: scale(1.06) rotate(-1deg);
 }
 
-/* Contenido de la tarjeta */
 .game-card-body {
     flex-grow: 1;
     margin-bottom: 20px;
@@ -318,7 +289,6 @@
     min-height: 44px;
 }
 
-/* Tags de características */
 .game-features {
     display: flex;
     flex-wrap: wrap;
@@ -341,7 +311,6 @@
     color: #e0aaff;
 }
 
-/* Botones de acción */
 .game-card-footer {
     margin-top: auto;
 }
@@ -407,10 +376,6 @@
     transform: translateY(-2px);
 }
 
-/* ==========================================================================
-   👑 TARJETA JUEGO ESPECIAL DESTACADO (1024)
-   ========================================================================== */
-
 .featured-card {
     background: linear-gradient(145deg, rgba(30, 12, 54, 0.9), rgba(16, 6, 32, 0.95));
     backdrop-filter: blur(14px);
@@ -475,10 +440,6 @@
     margin-bottom: 16px;
 }
 
-/* ==========================================================================
-   💬 BOTÓN FLOTANTE DEL CHAT
-   ========================================================================== */
-
 .floating-chat-host {
     position: relative;
     z-index: 1040;
@@ -510,11 +471,6 @@
     box-shadow: 0 12px 30px rgba(181, 23, 158, 0.55);
 }
 
-.chat-icon {
-    font-size: 1.25rem;
-    line-height: 1;
-}
-
 .chat-online-indicator {
     width: 9px;
     height: 9px;
@@ -524,88 +480,27 @@
     display: inline-block;
 }
 
-/* ==========================================================================
-   📱 DISEÑO RESPONSIVO (MEDIA QUERIES)
-   ========================================================================== */
-
 @media (max-width: 991px) {
-    .hero-title {
-        font-size: 2.6rem;
-    }
-    
-    .hero-banner {
-        padding: 36px 24px;
-    }
-
-    .game-image-wrapper {
-        height: 160px;
-    }
-
-    .game-image {
-        max-width: 130px;
-        max-height: 130px;
-    }
+    .hero-title { font-size: 2.6rem; }
+    .hero-banner { padding: 36px 24px; }
+    .game-image-wrapper { height: 160px; }
+    .game-image { max-width: 130px; max-height: 130px; }
 }
 
 @media (max-width: 767px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-
-    .section-title {
-        font-size: 1.7rem;
-    }
-
-    .featured-title {
-        font-size: 1.6rem;
-    }
-
-    .featured-image {
-        max-width: 140px;
-        max-height: 140px;
-    }
-
-    .chat-launcher-btn {
-        bottom: 18px;
-        right: 18px;
-        padding: 10px 18px;
-        font-size: 0.88rem;
-    }
+    .hero-title { font-size: 2rem; }
+    .hero-subtitle { font-size: 1rem; }
+    .section-title { font-size: 1.7rem; }
+    .featured-title { font-size: 1.6rem; }
+    .featured-image { max-width: 140px; max-height: 140px; }
+    .chat-launcher-btn { bottom: 18px; right: 18px; padding: 10px 18px; font-size: 0.88rem; }
 }
 
 @media (max-width: 480px) {
-    .hero-banner {
-        padding: 28px 16px;
-        border-radius: 20px;
-    }
-
-    .hero-title {
-        font-size: 1.7rem;
-    }
-
-    .game-card {
-        padding: 18px;
-    }
-
-    .chat-btn-label {
-        display: none;
-    }
-
-    .chat-launcher-btn {
-        width: 52px;
-        height: 52px;
-        padding: 0;
-        justify-content: center;
-        border-radius: 50%;
-    }
-
-    .chat-online-indicator {
-        position: absolute;
-        top: 6px;
-        right: 8px;
-    }
+    .hero-banner { padding: 28px 16px; border-radius: 20px; }
+    .hero-title { font-size: 1.7rem; }
+    .game-card { padding: 18px; }
+    .chat-btn-label { display: none; }
+    .chat-launcher-btn { width: 52px; height: 52px; padding: 0; justify-content: center; border-radius: 50%; }
+    .chat-online-indicator { position: absolute; top: 6px; right: 8px; }
 }
