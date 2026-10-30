@@ -1,118 +1,153 @@
-<div class="container text-center mt-4">
+<div class="game-screen-wrapper">
+    <div class="container py-4">
 
-    <h1 class="mb-4 text-primary">🎮 Juego 1024</h1>
+        <!-- Tarjeta Principal del Juego Especial 1024 -->
+        <div class="game-main-card card-1024-special shadow-lg">
 
-    <!-- Info del juego -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">👤 Jugador</h5>
-                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+            <!-- Encabezado del Juego -->
+            <div class="game-header text-center mb-4">
+                <span class="game-category-pill featured-special-pill">MODO ESPECIAL DESTACADO</span>
+                <h1 class="game-main-title">
+                    1024 <span class="gradient-text">PUZZLE MATRIX</span>
+                </h1>
+                <p class="game-subtitle">
+                    Combina fichas con el mismo número duplicando su valor. ¿Podrás alcanzar la mítica ficha 1024?
+                </p>
+            </div>
+
+            <!-- HUD / Barra de Estado -->
+            <div class="game-hud-grid mb-4">
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Jugador</span>
+                        <span class="hud-value text-cyan">{{ usuario?.nombre || 'Gamer' }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Tiempo</span>
+                        <span class="hud-value" [class.hud-warning]="tiempoRestante < 60">
+                            {{ (tiempoRestante$ | async)! | formatearTiempo }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Puntuación</span>
+                        <span class="hud-value text-gold">{{ puntuacion }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Objetivo</span>
+                        <span class="hud-value text-target">1024</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⏳ Tiempo</h5>
-                    <p class="card-text fs-4" 
-                        [class.text-danger]="tiempoRestante < 60"
-                        [class.text-warning]="tiempoRestante >= 60">
-                        {{ (tiempoRestante$ | async)! | formatearTiempo }}
+            <!-- Zona de Juego -->
+            @if (!empezarJuego) {
+                <div class="pre-game-box text-center py-5 my-3">
+                    <h3 class="pre-game-title">¿Listo para el desafío 1024?</h3>
+                    <p class="pre-game-text">
+                        Usa las flechas del teclado o los controles táctiles para mover el tablero.
                     </p>
+                    <div class="keyboard-guide-pills d-inline-flex gap-2 justify-content-center flex-wrap">
+                        <span class="guide-key">↑</span>
+                        <span class="guide-key">↓</span>
+                        <span class="guide-key">←</span>
+                        <span class="guide-key">→</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⭐ Puntuación</h5>
-                    <p class="card-text fs-4 text-success">{{ puntuacion }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">🎯 Objetivo</h5>
-                    <p class="card-text fs-4 text-info">1024</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if(!empezarJuego){
-        <p class="text-muted mb-4">Toque en el botón de jugar para empezar</p>
-        <p class="text-secondary">Usa las flechas del teclado o los botones para mover las fichas</p>
-        <p class="text-secondary">Combina números iguales para llegar a 1024</p>
-    } @else {
-        <!-- Tablero del juego -->
-        <div class="board-container mb-4">
-            <div class="board">
-                @for (fila of tablero; track fila) {
-                    <div class="row-board">
-                        @for (celda of fila; track celda.id) {
-                            <div 
-                                class="cell" 
-                                [class.nueva]="celda.esNueva"
-                                [class.fusionada]="celda.seFusiono"
-                                [class.vacia]="celda.valor === 0"
-                                [style.background-color]="obtenerColorCelda(celda.valor)"
-                                [style.color]="obtenerColorTexto(celda.valor)">
-                                {{ celda.valor !== 0 ? celda.valor : '' }}
+            } @else {
+                <!-- Tablero Cyber Matrix 1024 -->
+                <div class="cyber-board-wrapper mb-4">
+                    <div class="cyber-board-glow"></div>
+                    <div class="cyber-board">
+                        @for (fila of tablero; track $index) {
+                            <div class="board-row">
+                                @for (celda of fila; track celda.id) {
+                                    <div class="cyber-cell" 
+                                         [class.nueva]="celda.esNueva"
+                                         [class.fusionada]="celda.seFusiono"
+                                         [class.vacia]="celda.valor === 0"
+                                         [style.background-color]="obtenerColorCelda(celda.valor)"
+                                         [style.color]="obtenerColorTexto(celda.valor)">
+                                        {{ celda.valor !== 0 ? celda.valor : '' }}
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
+                </div>
+
+                <!-- Controles Direccionales (D-Pad Táctil) -->
+                <div class="dpad-controls-container mb-4">
+                    <span class="dpad-label mb-2 d-inline-block">Controles en Pantalla / Teclado</span>
+                    
+                    <div class="dpad-layout">
+                        <!-- Arriba -->
+                        <div class="dpad-row-up">
+                            <button type="button" 
+                                    class="btn-dpad" 
+                                    (click)="mover('arriba')" 
+                                    [disabled]="juegoTerminado || !juegoActivo"
+                                    title="Mover Arriba (↑)">
+                                ▲
+                            </button>
+                        </div>
+                        
+                        <!-- Izquierda, Abajo, Derecha -->
+                        <div class="dpad-row-middle">
+                            <button type="button" 
+                                    class="btn-dpad" 
+                                    (click)="mover('izquierda')" 
+                                    [disabled]="juegoTerminado || !juegoActivo"
+                                    title="Mover Izquierda (←)">
+                                ◀
+                            </button>
+                            <button type="button" 
+                                    class="btn-dpad" 
+                                    (click)="mover('abajo')" 
+                                    [disabled]="juegoTerminado || !juegoActivo"
+                                    title="Mover Abajo (↓)">
+                                ▼
+                            </button>
+                            <button type="button" 
+                                    class="btn-dpad" 
+                                    (click)="mover('derecha')" 
+                                    [disabled]="juegoTerminado || !juegoActivo"
+                                    title="Mover Derecha (→)">
+                                ▶
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Botones de Control al Pie -->
+            <div class="game-controls d-flex justify-content-center gap-3 flex-wrap mt-4 pt-3 border-top border-secondary-subtle">
+                @if (!empezarJuego) {
+                    <button class="btn btn-action-play btn-lg" (click)="empezar()">
+                        <span>Iniciar Desafío 1024</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
+                } @else {
+                    <button class="btn btn-action-restart btn-lg" (click)="reiniciarJuego()">
+                        <span>Reiniciar</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
                 }
             </div>
+
         </div>
 
-        <!-- Controles de dirección -->
-        <div class="controls mb-4">
-            <div class="controls-row">
-                <button 
-                    class="btn btn-outline-primary btn-control" 
-                    (click)="mover('arriba')" 
-                    [disabled]="juegoTerminado || !juegoActivo">
-                    ⬆️
-                </button>
-            </div>
-            <div class="controls-row">
-                <button 
-                    class="btn btn-outline-primary btn-control" 
-                    (click)="mover('izquierda')" 
-                    [disabled]="juegoTerminado || !juegoActivo">
-                    ⬅️
-                </button>
-                <button 
-                    class="btn btn-outline-primary btn-control" 
-                    (click)="mover('abajo')" 
-                    [disabled]="juegoTerminado || !juegoActivo">
-                    ⬇️
-                </button>
-                <button 
-                    class="btn btn-outline-primary btn-control" 
-                    (click)="mover('derecha')" 
-                    [disabled]="juegoTerminado || !juegoActivo">
-                    ➡️
-                </button>
-            </div>
-        </div>
-    }
-
-    <!-- Botones de control del juego -->
-    <div class="d-flex justify-content-center gap-3">
-        @if(!empezarJuego){
-            <button class="btn btn-warning btn-lg" (click)="empezar()">▶ Jugar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        } @else {
-            <button class="btn btn-warning btn-lg" (click)="reiniciarJuego()">🔄 Reiniciar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        }
     </div>
-
 </div>

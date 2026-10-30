@@ -1,132 +1,181 @@
-<div class="container text-center mt-4">
+<div class="game-screen-wrapper">
+    <div class="container py-4">
 
-    <h1 class="mb-4 text-primary">❓ Preguntados</h1>
+        <!-- Tarjeta Principal del Juego -->
+        <div class="game-main-card shadow-lg">
 
-    <!-- Info del jugador -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">👤 Jugador</h5>
-                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+            <!-- Encabezado del Juego -->
+            <div class="game-header text-center mb-4">
+                <span class="game-category-pill">TRIVIA & CULTURA GENERAL</span>
+                <h1 class="game-main-title">
+                    JUEGO DE <span class="gradient-text">PREGUNTADOS</span>
+                </h1>
+                <p class="game-subtitle">
+                    Pon a prueba tus conocimientos respondiendo preguntas de diversas temáticas contrarreloj
+                </p>
+            </div>
+
+            <!-- HUD / Barra de Estado -->
+            <div class="game-hud-grid mb-4">
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Jugador</span>
+                        <span class="hud-value text-cyan">{{ usuario?.nombre || 'Gamer' }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Aciertos</span>
+                        <span class="hud-value text-gold">{{ aciertos }} / {{ maxPreguntas }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Fallidas</span>
+                        <span class="hud-value text-danger">{{ preguntasFallidas }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Tiempo</span>
+                        <span class="hud-value" 
+                              [class.hud-warning]="tiempoRestante <= 30">
+                            {{ tiempoRestante | formatearTiempo }}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⭐ Aciertos</h5>
-                    <p class="card-text fs-4 text-success">{{ aciertos }} / {{ maxPreguntas }}</p>
-                </div>
-            </div>
-        </div>
+            <!-- Selección de Categoría -->
+            @if (!empezarJuego) {
+                <div class="category-selection-box p-4 mb-4 text-center">
+                    <span class="category-hint-badge mb-2">PASO 1</span>
+                    <h3 class="category-title mb-2">Elige una Categoría</h3>
+                    <p class="category-desc mb-4">Selecciona el área temática para comenzar a jugar:</p>
+                    
+                    <div class="category-chips-grid">
+                        @for (cat of categorias; track cat.id) {
+                            <button type="button" 
+                                    class="category-chip" 
+                                    [class.active]="categoriaSeleccionada?.id === cat.id"
+                                    (click)="seleccionarCategoria(cat)">
+                                <span class="cat-dot"></span>
+                                <span>{{ cat.nombre }}</span>
+                            </button>
+                        }
+                    </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">❌ Fallidas</h5>
-                    <p class="card-text fs-4 text-warning">{{ preguntasFallidas }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⏳ Tiempo</h5>
-                    <p class="card-text fs-4" 
-                        [class.text-danger]="tiempoRestante <= 30" 
-                        [class.text-warning]="tiempoRestante > 30 && tiempoRestante <= 60">
-                        {{ tiempoRestante | formatearTiempo }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Selección de categoría -->
-    @if(!empezarJuego){
-        <div class="mb-4">
-            <h4 class="text-xbox-white mb-3">Elige una categoría</h4>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                @for(cat of categorias; track cat.id){
-                <button class="btn btn-outline-primary btn-lg fw-bold"
-                        [class.active]="categoriaSeleccionada === cat"
-                        (click)="seleccionarCategoria(cat)">
-                    {{ cat.nombre }}
-                </button>
-                }
-            </div>
-        </div>
-    }
-
-    <!-- Cargando -->
-    @if(cargandoPreguntas){
-        <div class="alert alert-info">
-        <h3>Cargando preguntas...</h3>
-        </div>
-    }
-
-    <!-- Pregunta actual -->
-    @if(juegoActivo && preguntaActual && !cargandoPreguntas){
-        <div class="card bg-light shadow-sm mb-4">
-        <div class="card-body">
-            <div class="mb-2">
-            <span class="badge bg-info text-dark fs-6">
-                Pregunta {{ indicePregunta + 1 }} de {{ maxPreguntas }}
-            </span>
-            </div>
-
-            <h5 class="mb-3 text-muted">{{ preguntaActual.category }}</h5>
-            <h3 class="text-dark mb-4">{{ preguntaActual.question }}</h3>
-
-            <div class="row g-3">
-            @for(respuesta of preguntaActual.all_answers; track $index){
-                <div class="col-md-6">
-                <button 
-                    class="btn btn-lg w-100 fw-bold" 
-                    [ngClass]="getClaseBoton(respuesta)"
-                    (click)="seleccionarRespuesta(respuesta)"
-                    [disabled]="mostrarResultado">
-                    {{ respuesta }}
-                </button>
+                    @if (categoriaSeleccionada) {
+                        <div class="mt-4 pt-2">
+                            <button type="button" class="btn btn-action-play btn-lg px-4 py-2" (click)="empezar()">
+                                <span>Comenzar Trivia de {{ categoriaSeleccionada.nombre }}</span>
+                            </button>
+                        </div>
+                    }
                 </div>
             }
-            </div>
 
-            @if(mostrarResultado){
-            <div class="mt-4">
-                @if(esCorrecta){
-                <div class="alert alert-success"><strong>¡Correcto!</strong> 🎉</div>
+            <!-- Estado de Carga -->
+            @if (cargandoPreguntas) {
+                <div class="loading-questions-box text-center py-5 my-4">
+                    <div class="spinner-border text-info mb-3" role="status"></div>
+                    <h4 class="text-white">Generando preguntas de trivia...</h4>
+                    <p class="text-muted-custom">Conectando con la base de preguntas de Open Trivia Database</p>
+                </div>
+            }
+
+            <!-- Tarjeta de Pregunta Actual -->
+            @if (juegoActivo && preguntaActual && !cargandoPreguntas) {
+                <div class="question-arena-card mb-4">
+                    
+                    <!-- Barra de progreso / Header de la pregunta -->
+                    <div class="question-arena-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <span class="question-counter-badge">
+                            Pregunta <strong>{{ indicePregunta + 1 }}</strong> de {{ maxPreguntas }}
+                        </span>
+                        <span class="question-topic-badge">
+                            {{ preguntaActual.category }}
+                        </span>
+                    </div>
+
+                    <!-- Enunciado de la Pregunta -->
+                    <h2 class="question-text mb-4">
+                        {{ preguntaActual.question }}
+                    </h2>
+
+                    <!-- Respuestas de Selección Múltiple -->
+                    <div class="answers-grid row g-3">
+                        @for (respuesta of preguntaActual.all_answers; track $index) {
+                            <div class="col-12 col-md-6">
+                                <button type="button" 
+                                        class="btn answer-btn w-100" 
+                                        [ngClass]="getClaseBoton(respuesta)"
+                                        (click)="seleccionarRespuesta(respuesta)"
+                                        [disabled]="mostrarResultado">
+                                    <span class="answer-prefix">{{ ['A', 'B', 'C', 'D'][$index] || '•' }}</span>
+                                    <span class="answer-content">{{ respuesta }}</span>
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Retroalimentación / Feedback del Resultado -->
+                    @if (mostrarResultado) {
+                        <div class="result-feedback-box mt-4 p-3 rounded-4 animate-feedback">
+                            @if (esCorrecta) {
+                                <div class="feedback-banner banner-correct d-flex align-items-center gap-3">
+                                    <div>
+                                        <h5 class="mb-0 fw-bold">¡Respuesta Correcta!</h5>
+                                        <small>Has sumado +1 acierto a tu puntuación.</small>
+                                    </div>
+                                </div>
+                            } @else {
+                                <div class="feedback-banner banner-incorrect d-flex align-items-center gap-3">
+                                    <div>
+                                        <h5 class="mb-0 fw-bold">Respuesta Incorrecta</h5>
+                                        <small>La respuesta correcta era: <strong>{{ preguntaActual.correct_answer }}</strong></small>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-next-question btn-lg" (click)="siguientePregunta()">
+                                    <span>Siguiente Pregunta</span>
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            }
+
+            <!-- Botones de Control al Pie -->
+            <div class="game-controls d-flex justify-content-center gap-3 flex-wrap mt-4 pt-3 border-top border-secondary-subtle">
+                @if (!empezarJuego) {
+                    <button class="btn btn-action-play btn-lg"
+                            [disabled]="!categoriaSeleccionada"
+                            (click)="empezar()">
+                        <span>Comenzar Partida</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
                 } @else {
-                <div class="alert alert-danger">
-                    <strong>Incorrecto.</strong> Respuesta correcta: <strong>{{ preguntaActual.correct_answer }}</strong>
-                </div>
+                    @if (juegoActivo) {
+                        <button class="btn btn-action-restart btn-lg" (click)="reiniciarJuego()">
+                            <span>Reiniciar</span>
+                        </button>
+                    }
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
                 }
-                <button class="btn btn-primary btn-lg mt-3" (click)="siguientePregunta()">➡ Siguiente pregunta</button>
             </div>
-            }
-        </div>
-        </div>
-    }
 
-    <!-- Botones de control -->
-    <div class="d-flex justify-content-center gap-3">
-        @if(!empezarJuego){
-        <button class="btn btn-warning btn-lg"
-                [disabled]="!categoriaSeleccionada"
-                (click)="empezar()">
-            ▶ Jugar
-        </button>
-        <button class="btn bg-xbox-green btn-lg" (click)="volverHome()">🏠 Volver a home</button>
-        } @else {
-        @if(juegoActivo){
-            <button class="btn btn-info btn-lg" (click)="reiniciarJuego()">🔄 Reiniciar</button>
-        }
-        <button class="btn bg-xbox-green btn-lg" (click)="volverHome()">🏠 Volver a home</button>
-        }
+        </div>
+
     </div>
-
 </div>
-

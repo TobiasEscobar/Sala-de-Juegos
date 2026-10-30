@@ -1,92 +1,117 @@
-<div class="container py-4 text-center">
+<div class="game-screen-wrapper">
+    <div class="container py-4">
 
-    <!-- Info del jugador -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">👤 Jugador</h5>
-                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+        <!-- Tarjeta Principal del Juego -->
+        <div class="game-main-card shadow-lg">
+
+            <!-- Encabezado del Juego -->
+            <div class="game-header text-center mb-4">
+                <span class="game-category-pill">CARTAS & PROBABILIDAD</span>
+                <h1 class="game-main-title">
+                    MAYOR O <span class="gradient-text">MENOR</span>
+                </h1>
+                <p class="game-subtitle">
+                    Adivina si la siguiente carta de la baraja española tendrá un valor mayor o menor
+                </p>
+            </div>
+
+            <!-- HUD / Barra de Estado de la Partida -->
+            <div class="game-hud-grid mb-4">
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Jugador</span>
+                        <span class="hud-value text-cyan">{{ usuario?.nombre || 'Gamer' }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Aciertos</span>
+                        <span class="hud-value text-gold">{{ aciertos }} / {{ maxAciertos }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Fallos</span>
+                        <span class="hud-value text-orange">{{ intentosFallidos }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Vidas</span>
+                        <span class="hud-value text-danger">{{ vidas }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item hud-item-time">
+                    <div class="hud-data">
+                        <span class="hud-label">Tiempo</span>
+                        <span class="hud-value" [class.hud-warning]="tiempoRestante < 60">
+                            {{ tiempoRestante | formatearTiempo }}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-2">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⭐ Aciertos</h5>
-                    <p class="card-text fs-4 text-success">{{ aciertos }} / {{ maxAciertos }}</p>
+            <!-- Zona de Juego -->
+            @if (!empezarJuego) {
+                <div class="pre-game-box text-center py-5 my-3">
+                    <h3 class="pre-game-title">¿Preparado para el desafío de cartas?</h3>
+                    <p class="pre-game-text">Pulsa el botón de inicio para destapar la primera carta y comenzar.</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-2">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">❌ Fallidos</h5>
-                    <p class="card-text fs-4 text-warning">{{ intentosFallidos }}</p>
+            } @else {
+                <!-- Tapete / Pedestal de la Carta Actual -->
+                <div class="card-arena-container text-center mb-4">
+                    <span class="arena-label mb-2 d-inline-block">CARTA ACTUAL EN JUEGO</span>
+                    
+                    <div class="card-pedestal">
+                        <div class="card-glow"></div>
+                        @if (cartaActual) {
+                            <img [src]="cartaActual.imagen_url" class="img-fluid playing-card shadow-lg" alt="Carta actual" />
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-2">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">❤ Vidas</h5>
-                    <p class="card-text fs-4" >
-                        {{ vidas }}
-                    </p>
+                <!-- Botones de Elección: Mayor vs Menor -->
+                <div class="choice-buttons-container mb-4">
+                    <button type="button" (click)="elegir('mayor')" class="btn btn-choice-higher">
+                        <div class="choice-text">
+                            <span class="choice-main">MAYOR</span>
+                            <span class="choice-sub">La siguiente carta será superior</span>
+                        </div>
+                    </button>
+
+                    <button type="button" (click)="elegir('menor')" class="btn btn-choice-lower">
+                        <div class="choice-text">
+                            <span class="choice-main">MENOR</span>
+                            <span class="choice-sub">La siguiente carta será inferior</span>
+                        </div>
+                    </button>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⏳ Tiempo</h5>
-                    <p class="card-text fs-4" 
-                        [class.text-danger]="tiempoRestante < 60"
-                        [class.text-warning]="tiempoRestante >= 60">
-                        {{ tiempoRestante | formatearTiempo }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mesa de juego -->
-    <div class="row justify-content-center mb-4">
-
-        <!-- Carta actual -->
-        <div class="col-md-4 mb-3">
-            <h2 class="text-xbox-white">Carta actual</h2>
-            @if (cartaActual) {
-                <img [src]="cartaActual.imagen_url" class="img-fluid rounded shadow img-carta" alt="Carta actual" />
             }
+
+            <!-- Botones de Control al Pie -->
+            <div class="game-controls d-flex justify-content-center gap-3 flex-wrap mt-4 pt-3 border-top border-secondary-subtle">
+                @if (!empezarJuego) {
+                    <button class="btn btn-action-play btn-lg" (click)="empezar()">
+                        <span>Iniciar Partida</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
+                } @else {
+                    <button class="btn btn-action-restart btn-lg" (click)="reiniciarJuego()">
+                        <span>Reiniciar</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
+                }
+            </div>
+
         </div>
 
     </div>
-
-    <!-- Botones de elección -->
-    @if (!empezarJuego) {
-        <p class="text-xbox-white">Toque en el boton de jugar para empezar</p>
-    } @else {
-        <div class="d-flex justify-content-center gap-3 mb-4">
-            <button (click)="elegir('mayor')" class="btn btn-success btn-lg">Mayor</button>
-            <button (click)="elegir('menor')" class="btn btn-danger btn-lg">Menor</button>
-        </div>
-    }
-
-    <!-- Botón volver -->
-    <div class="d-flex justify-content-center gap-3">
-        @if(!empezarJuego){
-            <button class="btn btn-warning btn-lg" (click)="empezar()">▶ Jugar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        } @else {
-            <button class="btn bg-xbox-green" (click)="reiniciarJuego()">🔄 Reiniciar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        }
-
-    </div>
-
 </div>

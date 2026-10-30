@@ -1,116 +1,179 @@
-<div class="container-total">
+<div class="home-wrapper">
+    <div class="container py-5">
 
-    <div class="container py-4">
+        <!-- Hero / Banner de Bienvenida -->
+        <section class="hero-banner shadow-lg mb-5">
+            <div class="hero-content text-center">
+                <span class="hero-pill mb-3">
+                    <span class="hero-pulse"></span>
+                    Plataforma de Minijuegos Online
+                </span>
+                
+                <h1 class="hero-title">
+                    SALA DE <span class="gradient-text">JUEGOS</span>
+                </h1>
 
-        <!-- Mensaje según login -->
-        @if (!isLogged) {
-            <div class="container justify-content-center bg-dark container-bienvenida">
-            <h1 class="title-bienvenida">¡Bienvenido a mi Sala de Juegos 🎮!</h1>
-            <br>
-            <p id="p-bienvenida">Por favor, ingrese o regístrese para acceder a los juegos y sus rankings.</p>
+                @if (!isLogged) {
+                    <p class="hero-subtitle">
+                        Demuestra tu habilidad en nuestros minijuegos clásicos, escala posiciones en la tabla de clasificación y chatea con la comunidad en vivo.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                        <button class="btn btn-hero-primary" (click)="navigateToLogin()">
+                            Iniciar Sesión
+                        </button>
+                        <button class="btn btn-hero-secondary" (click)="navigateToRegister()">
+                            Registrarse Gratis
+                        </button>
+                    </div>
+                } @else {
+                    <p class="hero-subtitle">
+                        ¡Bienvenidx de vuelta, <strong class="text-highlight">{{ currentUser?.nombre || 'Gamer' }}</strong>! Tus partidas y récords se están sincronizando en vivo con la tabla de clasificación.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                        <button class="btn btn-hero-secondary" (click)="navigateToRankings()">
+                            Ver Clasificación Global
+                        </button>
+                    </div>
+                }
             </div>
-        }
-        <!-- } @else {
-            <div class="">
-            <h3>Bienvenido/a <strong>{{ currentUser?.nombre }}</strong> a nuestra web!</h3>
+        </section>
+
+        <!-- Sección: Juegos Clásicos -->
+        <section class="games-section mb-5">
+            <div class="section-header text-center mb-4">
+                <div class="section-tag">Colección Arcade</div>
+                <h2 class="section-title">Nuestros Juegos Clásicos</h2>
+                <p class="section-description">
+                    Supera cada reto antes de que se agote el tiempo y acumula puntos para el podio.
+                </p>
             </div>
-        } -->
 
+            <div class="row g-4 justify-content-center">
+                @for (game of classicGames; track game.id) {
+                    <div class="col-12 col-md-6 col-lg-4 d-flex">
+                        <div class="game-card h-100 w-100" [style.--accent-color]="game.accentColor">
+                            
+                            <!-- Cabecera de la tarjeta con categoría y badge -->
+                            <div class="game-card-header">
+                                <span class="game-category">{{ game.category }}</span>
+                                <span class="game-badge">{{ game.badge }}</span>
+                            </div>
 
-        <h2 class="title">Nuestra selección de juegos clasicos</h2>
+                            <!-- Contenedor de la ilustración del juego -->
+                            <div class="game-image-wrapper">
+                                <div class="game-image-glow"></div>
+                                <img [src]="game.image" [alt]="game.title" class="game-image" loading="lazy" />
+                            </div>
 
+                            <!-- Cuerpo y contenido -->
+                            <div class="game-card-body">
+                                <h3 class="game-title">{{ game.title }}</h3>
+                                <p class="game-description">{{ game.description }}</p>
 
-        <div class="row justify-content-center g-4">
-            @for (juego of [1,2,3]; track juego) {
-                <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center">
-                    <div class="card text-center shadow-sm juego-card">
-                        <!-- Imagen -->
-                        <img src="juego{{juego}}.png" class="rounded-circle img-juego" alt="Juego {{juego}}">
+                                <!-- Características / Badges de juego -->
+                                <div class="game-features">
+                                    @for (feat of game.features; track feat) {
+                                        <span class="feature-tag">{{ feat }}</span>
+                                    }
+                                </div>
+                            </div>
 
-                        <!-- Body -->
-                        <div class="card-body juego-body-card">
-                            @if (juego === 1) {
+                            <!-- Acciones / Botones -->
+                            <div class="game-card-footer">
+                                @if (isLogged) {
+                                    <div class="action-buttons-group">
+                                        <button class="btn btn-play" (click)="navigateToGame(game.route)">
+                                            <span>Jugar Ahora</span>
+                                        </button>
+                                        <button class="btn btn-rank" (click)="navigateToRankings()" title="Ver rankings">
+                                            <span>Tabla</span>
+                                        </button>
+                                    </div>
+                                } @else {
+                                    <button class="btn btn-login-required w-100" (click)="navigateToLogin()">
+                                        <span>Iniciar Sesión para Jugar</span>
+                                    </button>
+                                }
+                            </div>
 
-                                <h5 class="card-title">Ahorcado</h5>
-                                <p>Forme la mayor cantidad de palabras posibles antes de que se termine el tiempo o sus intentos!</p>
-                                <div class="d-flex justify-content-center gap-3 mt-3">
-                                    @if (!isLogged) {
-                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
-                                    } @else {
-                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/ahorcado')">Jugar</button>
-                                        <button class="btn boton-secundario" (click)="dirigirARankings('/rankings')">Ver tabla de puntos</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- Sección: Juego Especial Destacado (1024) -->
+        <section class="featured-section">
+            <div class="section-header text-center mb-4">
+                <div class="section-tag featured-tag">Desafío Legendario</div>
+                <h2 class="section-title">Juego Especial</h2>
+                <p class="section-description">
+                    Un puzzle numérico de alta concentración. Desafía tu mente y alcanza el objetivo de la ficha 1024.
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-xl-10">
+                    <div class="featured-card shadow-lg" [style.--accent-color]="featuredGame.accentColor">
+                        <div class="row g-0 align-items-center">
+                            
+                            <!-- Ilustración del juego especial -->
+                            <div class="col-12 col-md-5 text-center p-4">
+                                <div class="featured-image-container">
+                                    <div class="featured-glow"></div>
+                                    <img [src]="featuredGame.image" [alt]="featuredGame.title" class="featured-image" />
+                                </div>
+                            </div>
+
+                            <!-- Información y detalles -->
+                            <div class="col-12 col-md-7 p-4 p-lg-5">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="game-badge featured-badge">Modo Especial</span>
+                                    <span class="game-category">{{ featuredGame.category }}</span>
+                                </div>
+
+                                <h3 class="featured-title">{{ featuredGame.title }}</h3>
+                                <p class="featured-description">{{ featuredGame.description }}</p>
+
+                                <div class="game-features mb-4">
+                                    @for (feat of featuredGame.features; track feat) {
+                                        <span class="feature-tag featured-feat-tag">{{ feat }}</span>
                                     }
                                 </div>
 
-                            } @else if (juego === 2) {
-
-                                <h5 class="card-title">Mayor o Menor</h5>
-                                <p>Apueste a si la siguiente carta que salga será mayor o menor a la que usted tiene.</p>
-                                <div class="d-flex justify-content-center gap-3 mt-3">
-                                    @if (!isLogged) {
-                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    @if (isLogged) {
+                                        <button class="btn btn-hero-primary px-4" (click)="navigateToGame(featuredGame.route)">
+                                            <span>Jugar Desafío 1024</span>
+                                        </button>
+                                        <button class="btn btn-hero-secondary px-4" (click)="navigateToRankings()">
+                                            <span>Tabla de Récords</span>
+                                        </button>
                                     } @else {
-                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/mayor-o-menor')">Jugar</button>
-                                        <button class="btn boton-secundario" (click)="dirigirARankings('/rankings')">Ver tabla de puntos</button>
+                                        <button class="btn btn-hero-primary px-4" (click)="navigateToLogin()">
+                                            <span>Iniciar Sesión para Jugar</span>
+                                        </button>
                                     }
                                 </div>
+                            </div>
 
-                            } @else {
-
-                                <h5 class="card-title">Preguntados</h5>
-                                <p>Mida su nivel de cultura general en este divertido test e intente llegar al maximo puntaje.</p>
-                                <div class="d-flex justify-content-center gap-3 mt-3">
-                                    @if (!isLogged) {
-                                        <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
-                                    } @else {
-                                        <button class="btn boton-primario" (click)="dirigirAJuegos('/preguntados')">Jugar</button>
-                                        <button class="btn boton-secundario" (click)="dirigirARankings('/rankings')">Ver tabla de puntos</button>
-                                    }
-                                </div>
-                            }
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-            
-
-        <br>
-        <h2 class="title">Juego Especial</h2>
-
-        <div class="row justify-content-center g-4">
-            <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center">
-                <div class="card text-center shadow-sm juego-card">
-                    <!-- Imagen -->
-                    <img src="juego-propio.png" class="rounded-circle img-juego" alt="Juego 2048">
-                    
-                    <!-- Body -->
-                    <div class="card-body juego-body-card">
-                        <h5 class="card-title">1024</h5>
-                        <p>¿Podrá llegar al 1024 antes de que se termine el tiempo?</p>
-                        
-                        <div class="d-flex justify-content-center gap-3 mt-3">
-                            @if (!isLogged) {
-                                <button class="btn boton-primario" (click)="dirigirALogin()">Iniciar sesión</button>
-                            } @else {
-                                <button class="btn boton-primario" (click)="dirigirAJuegos('/1024')">Jugar</button>
-                                <button class="btn boton-secundario" (click)="dirigirARankings('/rankings')">Ver tabla de puntos</button>
-                            }
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="home-chat">
+    </div>
 
-            <button class="btn btn-primary chat-toggle" (click)="toggleChat()">
-                Chat
+    <!-- Módulo de Chat Flotante -->
+    <div class="floating-chat-host">
+        @if (!mostrarChat) {
+            <button class="chat-launcher-btn shadow-lg" (click)="openChat()" title="Abrir chat en vivo">
+                <span class="chat-btn-label">Chat en Vivo</span>
+                <span class="chat-online-indicator"></span>
             </button>
-
-            @if (mostrarChat) {
-                <app-chat (cerrar)="toggleChat()"></app-chat>
-            }
-        </div>
-
+        } @else {
+            <app-chat (closeChat)="closeChat()"></app-chat>
+        }
+    </div>
 </div>

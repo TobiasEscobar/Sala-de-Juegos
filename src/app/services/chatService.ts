@@ -1,135 +1,185 @@
-import { Injectable, inject } from '@angular/core';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { Supabase } from './supabase';
+
+/**
+ * Representa la estructura de un mensaje del chat, coincidiendo con la tabla 'mensajes' de PostgreSQL.
+ * Columnas: id, usuario, mensaje, fecha.
+ */
+export interface ChatMessage {
+    id: number;
+    usuario: string;
+    mensaje: string;
+    fecha?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-    private supabase: SupabaseClient;
-    private realtimeChannel: any = null;
+    private realtimeChannel: RealtimeChannel | null = null;
 
-    constructor() {
-        // Crear cliente con configuración específica para realtime
-        this.supabase = createClient(
-            environment.SUPABASE_URL, 
-            environment.SUPABASE_ANON_KEY,
-            {
-                auth: {
-                    persistSession: true,    // Mantener sesión para usuarios logueados
-                    autoRefreshToken: true,  // Renovar token automáticamente
-                },
-                realtime: {
-                    params: {
-                        eventsPerSecond: 10,  // Permitir hasta 10 eventos por segundo para chat
-                    },
-                },
-            }
-        );
+    constructor(private supabaseService: Supabase) {}
+
+    /**
+     * Obtiene la instancia compartida de SupabaseClient con la sesión actual del usuario.
+     */
+    private get supabase(): SupabaseClient {
+        return this.supabaseService.supabase;
     }
 
-    // Obtener todos los mensajes ordenados por fecha
-    async getMensajes() {
+    /**
+     * Obtiene todos los mensajes ordenados cronológicamente por fecha ascendente.
+     */
+    async getMessages(): Promise<ChatMessage[]> {
         const { data, error } = await this.supabase
             .from('mensajes')
             .select('*')
-            .order('fecha', { ascending: true });
+            .order('fecha', { ascending: true })
+            .order('id', { ascending: true });
 
         if (error) {
-            console.error('Error obteniendo mensajes:', error);
+            console.error('Error al obtener mensajes de Supabase:', error);
             throw error;
         }
-        
-        return data || [];
+
+        return (data || []) as ChatMessage[];
     }
 
-    // Enviar un nuevo mensaje
-    async enviarMensaje(usuario: string, mensaje: string) {
+    /**
+     * Obtiene los últimos N mensajes ordenados cronológicamente (los más antiguos primero en la lista).
+     * @param limit Cantidad de mensajes a recuperar (por defecto 50).
+     */
+    async getLatestMessages(limit: number = 50): Promise<ChatMessage[]> {
+        const { data, error } = await this.supabase
+            .from('mensajes')
+            .select('*')
+            .order('fecha', { ascending: false })
+            .order('id', { ascending: false })
+            .limit(limit);
+
+        if (error) {
+            console.error('Error al obtener los últimos mensajes:', error);
+            throw error;
+        }
+
+        const list = (data || []) as ChatMessage[];
+        return list.reverse();
+    }
+
+    /**
+     * Inserta un nuevo mensaje en la tabla 'mensajes' de Supabase y retorna el registro creado.
+     * @param username Nombre del remitente.
+     * @param messageText Contenido del mensaje.
+     */
+    async sendMessage(username: string, messageText: string): Promise<ChatMessage> {
+        const cleanUser = username?.trim();
+        const cleanMessage = messageText?.trim();
+
+        if (!cleanUser) {
+            throw new Error('El nombre de usuario es obligatorio.');
+        }
+
+        if (!cleanMessage) {
+            throw new Error('El mensaje no puede estar vacío.');
+        }
+
+        // Se inserta usuario y mensaje. La columna fecha toma automáticamente DEFAULT now() en PostgreSQL
         const { data, error } = await this.supabase
             .from('mensajes')
             .insert([
                 {
-                    usuario,
-                    mensaje,
+                    usuario: cleanUser,
+                    mensaje: cleanMessage,
                     fecha: new Date().toISOString()
                 }
             ])
             .select()
             .single();
-        
+
         if (error) {
-            console.error('Error enviando mensaje:', error);
+            console.error('Error al insertar mensaje en la base de datos:', error);
             throw error;
         }
-        
-        return data;
+
+        return data as ChatMessage;
     }
 
-    // Suscribirse a cambios en tiempo real de la tabla mensajes
-    suscribirRealtime(callback: (payload: any) => void) {
+    /**
+     * Se suscribe al canal en tiempo real de la tabla 'mensajes' en el esquema público de Supabase.
+     * Remueve suscripciones anteriores para evitar duplicados o fugas de memoria.
+     * @param callback Función invocada cuando se recibe un evento postgres_changes (INSERT, UPDATE, DELETE).
+     */
+    subscribeRealtime(callback: (payload: any) => void): RealtimeChannel | null {
         try {
-            // Si ya hay un canal, desuscribirse primero
-            if (this.realtimeChannel) {
-                this.realtimeChannel.unsubscribe();
-            }
+            // Limpiar cualquier canal previo existente
+            this.unsubscribe();
 
-            console.log('🔌 Conectando al canal de mensajes...');
-            
-            // Crear canal con nombre único
+            const channelTopic = `public:mensajes:${Date.now()}`;
+            console.log('🔌 Conectando al canal de chat en tiempo real:', channelTopic);
+
             this.realtimeChannel = this.supabase
-                .channel('public:mensajes') // Nombre del canal
+                .channel(channelTopic)
                 .on(
                     'postgres_changes',
-                    { 
-                        event: '*',           // Escuchar todos los eventos (INSERT, UPDATE, DELETE)
-                        schema: 'public', 
-                        table: 'mensajes' 
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'mensajes'
                     },
                     (payload) => {
-                        // Llamar al callback cuando llegue un evento
                         callback(payload);
                     }
                 )
                 .subscribe((status) => {
-                    console.log('📡 Estado de conexión realtime:', status);
-                    
+                    console.log('📡 Estado de conexión Realtime:', status);
                     if (status === 'SUBSCRIBED') {
-                        console.log('✅ Conectado al canal de mensajes en tiempo real');
+                        console.log('✅ Conexión establecida con éxito al canal de chat');
                     } else if (status === 'CLOSED') {
-                        console.log('❌ Canal cerrado');
+                        console.log('❌ Canal Realtime cerrado');
                     } else if (status === 'CHANNEL_ERROR') {
-                        console.error('❌ Error en el canal');
+                        console.error('❌ Error de canal en Realtime');
                     }
                 });
 
             return this.realtimeChannel;
         } catch (error) {
-            console.error('❌ Error configurando realtime:', error);
-            throw error;
+            console.error('❌ Error al configurar suscripción Realtime:', error);
+            return null;
         }
     }
 
-    // Desuscribirse del canal de realtime
-    desuscribir() {
+    /**
+     * Desuscribe y remueve el canal de Realtime del cliente de Supabase de manera limpia.
+     */
+    unsubscribe(): void {
         if (this.realtimeChannel) {
-            console.log('🔌 Desconectando del canal...');
-            this.realtimeChannel.unsubscribe();
+            console.log('🔌 Removiendo canal de chat Realtime...');
+            try {
+                this.supabase.removeChannel(this.realtimeChannel);
+            } catch (error) {
+                console.error('Error al remover el canal Realtime:', error);
+            }
             this.realtimeChannel = null;
         }
     }
 
-    // Método auxiliar para obtener los últimos N mensajes (útil para optimización)
-    async getUltimosMensajes(cantidad: number = 10) {
-        const { data, error } = await this.supabase
-            .from('mensajes')
-            .select('*')
-            .order('fecha', { ascending: false })
-            .limit(cantidad);
+    // Aliases para compatibilidad hacia atrás
+    async getMensajes(): Promise<ChatMessage[]> {
+        return this.getMessages();
+    }
 
-        if (error) {
-            console.error('Error obteniendo últimos mensajes:', error);
-            throw error;
-        }
-        
-        // Revertir el orden para mostrar los más antiguos primero
-        return (data || []).reverse();
+    async getUltimosMensajes(cantidad: number = 50): Promise<ChatMessage[]> {
+        return this.getLatestMessages(cantidad);
+    }
+
+    async enviarMensaje(usuario: string, mensaje: string): Promise<ChatMessage> {
+        return this.sendMessage(usuario, mensaje);
+    }
+
+    suscribirRealtime(callback: (payload: any) => void): RealtimeChannel | null {
+        return this.subscribeRealtime(callback);
+    }
+
+    desuscribir(): void {
+        this.unsubscribe();
     }
 }

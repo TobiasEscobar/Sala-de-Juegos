@@ -1,9 +1,20 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter,
+  signal,
+  ViewChild,
+  ElementRef,
+  inject,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../services/chatService';
-import { AuthService } from '../../services/auth';
 import { Subscription } from 'rxjs';
+import { ChatService, ChatMessage } from '../../services/chatService';
+import { AuthService } from '../../services/auth';
 import { User } from '../../clases/user';
 
 @Component({
@@ -14,155 +25,310 @@ import { User } from '../../clases/user';
   styleUrls: ['./chat.css']
 })
 export class Chat implements OnInit, OnDestroy {
+  @Output() closeChat = new EventEmitter<void>();
   @Output() cerrar = new EventEmitter<void>();
 
-  // Signals para manejo reactivo del estado
-  mensajes = signal<any[]>([]);
-  nuevoMensaje = '';
-  usuarioActual: string | null = null;
-  enviandoMensaje = false;
-  
-  private userSub!: Subscription;
-  private realtimeChannel: any = null;
+  @ViewChild('messagesContainer') private messagesContainer?: ElementRef<HTMLDivElement>;
+
+  // Signals y propiedades de estado en inglés
+  messages = signal<ChatMessage[]>([]);
+  newMessage = '';
+  currentUsername: string | null = null;
+  currentUser: User | null = null;
+  isSending = false;
+
+  private userSubscription?: Subscription;
+  private pollingIntervalId: any = null;
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(
     private chatService: ChatService,
-    private auth: AuthService
+    private authService: AuthService
   ) {}
 
-  async ngOnInit() {
-    // Obtener usuario logueado
-    this.userSub = this.auth.currentUser$.subscribe(user => {
-      this.usuarioActual = user?.nombre || null;
+  // Aliases de compatibilidad hacia atrás
+  get mensajes() {
+    return this.messages;
+  }
+
+  get nuevoMensaje(): string {
+    return this.newMessage;
+  }
+
+  set nuevoMensaje(value: string) {
+    this.newMessage = value;
+  }
+
+  get usuarioActual(): string | null {
+    return this.currentUsername;
+  }
+
+  set usuarioActual(value: string | null) {
+    this.currentUsername = value;
+  }
+
+  get enviandoMensaje(): boolean {
+    return this.isSending;
+  }
+
+  set enviandoMensaje(value: boolean) {
+    this.isSending = value;
+  }
+
+  async ngOnInit(): Promise<void> {
+    // 1. Obtener usuario inicial sincrónico si ya existe
+    const cachedUser = this.authService.getCurrentUser();
+    if (cachedUser) {
+      this.updateUserContext(cachedUser);
+    }
+
+    // 2. Suscribirse a cambios en el usuario autenticado
+    this.userSubscription = this.authService.currentUser$.subscribe((user) => {
+      this.updateUserContext(user);
     });
 
-    // Cargar historial de mensajes
-    await this.cargarMensajesIniciales();
-    
-    // Configurar realtime DESPUÉS de cargar mensajes iniciales
+    // 3. Si no hay usuario cargado aún, intentar cargarlo desde la sesión de Supabase
+    if (!this.currentUsername) {
+      try {
+        const loadedUser = await this.authService.loadUserFromSession();
+        if (loadedUser) {
+          this.updateUserContext(loadedUser);
+        }
+      } catch (error) {
+        console.warn('No se pudo cargar usuario desde sesión en chat:', error);
+      }
+    }
+
+    // 4. Cargar el historial inicial de mensajes
+    await this.loadInitialMessages();
+
+    // 5. Configurar conexión en tiempo real
     this.setupRealtime();
 
-    // Scroll al último mensaje después de un pequeño delay
-    setTimeout(() => this.scrollUltimo(), 100);
+    // 6. Activar sondeo (polling) de respaldo periódico cada 4 segundos
+    this.startPolling();
+
+    // 7. Desplazar hacia abajo al cargar
+    setTimeout(() => this.scrollToBottom(), 100);
   }
 
-  ngOnDestroy() {
-    // Limpiar suscripciones
-    this.userSub?.unsubscribe();
-    
-    // Desuscribirse del canal de realtime
-    if (this.realtimeChannel) {
-      console.log('🔌 Desconectando del canal de chat...');
-      this.realtimeChannel.unsubscribe();
+  ngOnDestroy(): void {
+    // Limpieza de suscripciones y recursos al cerrar el componente
+    this.userSubscription?.unsubscribe();
+    this.chatService.unsubscribe();
+    this.stopPolling();
+  }
+
+  /**
+   * Actualiza las referencias locales del usuario y asigna un nombre para mostrar.
+   */
+  private updateUserContext(user: User | null): void {
+    this.currentUser = user;
+    if (user) {
+      const candidateName = user.nombre?.trim() || user.name?.trim();
+      const candidateEmail = user.email?.trim();
+      this.currentUsername = candidateName || (candidateEmail ? candidateEmail.split('@')[0] : 'Usuario');
+    } else {
+      this.currentUsername = null;
     }
+    this.cdr.markForCheck();
   }
 
-  private async cargarMensajesIniciales() {
+  /**
+   * Carga los mensajes más recientes desde la base de datos de Supabase.
+   */
+  async loadInitialMessages(): Promise<void> {
     try {
-      console.log('📥 Cargando mensajes iniciales...');
-      const data = await this.chatService.getUltimosMensajes();
-      this.mensajes.set(data);
-      console.log(`✅ ${data.length} mensajes cargados`);
+      console.log('📥 Cargando mensajes del chat...');
+      const loadedMessages = await this.chatService.getLatestMessages(50);
+      this.messages.set(loadedMessages);
+      console.log(`✅ ${loadedMessages.length} mensajes cargados`);
+      setTimeout(() => this.scrollToBottom(), 50);
     } catch (error) {
-      console.error('❌ Error cargando mensajes:', error);
+      console.error('❌ Error al cargar mensajes iniciales:', error);
     }
   }
 
-  private setupRealtime() {
+  /**
+   * Configura la escucha de eventos en tiempo real (INSERT, UPDATE, DELETE).
+   */
+  private setupRealtime(): void {
     try {
-      console.log('🔄 Configurando realtime para mensajes...');
-      
-      this.realtimeChannel = this.chatService.suscribirRealtime((payload: any) => {
-        console.log('📡 Evento realtime recibido:', payload);
+      this.chatService.subscribeRealtime((payload: any) => {
         const eventType = payload.eventType;
 
-        // Manejo de INSERT - nuevo mensaje
-        if (eventType === 'INSERT') {
-          const nuevoMensaje = payload.new;
-          console.log('➕ Nuevo mensaje:', nuevoMensaje);
-          
-          if (nuevoMensaje) {
-            // Actualizar signal agregando el nuevo mensaje
-            this.mensajes.update((msgs) => {
-              // Verificar que no esté duplicado
-              const existe = msgs.find(m => m.id === nuevoMensaje.id);
-              if (!existe) {
-                const nuevaLista = [...msgs, nuevoMensaje];
-                // Scroll después de actualizar
-                setTimeout(() => this.scrollUltimo(), 50);
-                return nuevaLista;
-              }
-              return msgs;
-            });
-          }
-        }
-
-        // Manejo de UPDATE - mensaje editado (si implementas edición)
-        if (eventType === 'UPDATE') {
-          const mensajeActualizado = payload.new;
-          console.log('✏️ Mensaje actualizado:', mensajeActualizado);
-          
-          if (mensajeActualizado) {
-            this.mensajes.update((msgs) =>
-              msgs.map((m) => m.id === mensajeActualizado.id ? mensajeActualizado : m)
-            );
-          }
-        }
-
-        // Manejo de DELETE - mensaje eliminado (si implementas eliminación)
-        if (eventType === 'DELETE') {
-          const mensajeEliminado = payload.old;
-          console.log('🗑️ Mensaje eliminado:', mensajeEliminado);
-          
-          if (mensajeEliminado) {
-            this.mensajes.update((msgs) => 
-              msgs.filter((m) => m.id !== mensajeEliminado.id)
-            );
-          }
+        if (eventType === 'INSERT' && payload.new) {
+          const incomingMessage: ChatMessage = payload.new;
+          this.messages.update((existingList) => {
+            const alreadyExists = existingList.some((m) => m.id === incomingMessage.id);
+            if (!alreadyExists) {
+              const updatedList = [...existingList, incomingMessage];
+              setTimeout(() => this.scrollToBottom(), 50);
+              return updatedList;
+            }
+            return existingList;
+          });
+          this.cdr.markForCheck();
+        } else if (eventType === 'UPDATE' && payload.new) {
+          const updatedMessage: ChatMessage = payload.new;
+          this.messages.update((existingList) =>
+            existingList.map((m) => (m.id === updatedMessage.id ? updatedMessage : m))
+          );
+          this.cdr.markForCheck();
+        } else if (eventType === 'DELETE' && payload.old) {
+          const deletedId = payload.old.id;
+          this.messages.update((existingList) =>
+            existingList.filter((m) => m.id !== deletedId)
+          );
+          this.cdr.markForCheck();
         }
       });
     } catch (error) {
-      console.error('❌ Error configurando realtime:', error);
+      console.error('❌ Error configurando realtime en el componente chat:', error);
     }
   }
 
-  async enviar() {
-    if (!this.nuevoMensaje.trim() || !this.usuarioActual || this.enviandoMensaje) {
+  /**
+   * Inicia un sondeo periódico cada 4 segundos como respaldo en caso de que
+   * la publicación de Realtime en PostgreSQL esté deshabilitada o desconectada.
+   */
+  private startPolling(): void {
+    this.stopPolling();
+    this.pollingIntervalId = setInterval(async () => {
+      try {
+        const latest = await this.chatService.getLatestMessages(50);
+        if (latest && latest.length > 0) {
+          this.messages.update((current) => {
+            const currentIds = new Set(current.map((m) => m.id));
+            const newEntries = latest.filter((m) => !currentIds.has(m.id));
+
+            if (newEntries.length > 0) {
+              const merged = [...current, ...newEntries].sort((a, b) => {
+                const dateA = a.fecha ? new Date(a.fecha).getTime() : 0;
+                const dateB = b.fecha ? new Date(b.fecha).getTime() : 0;
+                return dateA - dateB || a.id - b.id;
+              });
+              setTimeout(() => this.scrollToBottom(), 50);
+              return merged;
+            }
+            return current;
+          });
+          this.cdr.markForCheck();
+        }
+      } catch {
+        // Manejo silencioso en sondeo para no saturar consola
+      }
+    }, 4000);
+  }
+
+  /**
+   * Detiene el intervalo de sondeo.
+   */
+  private stopPolling(): void {
+    if (this.pollingIntervalId) {
+      clearInterval(this.pollingIntervalId);
+      this.pollingIntervalId = null;
+    }
+  }
+
+  /**
+   * Envía un mensaje a la base de datos de Supabase.
+   */
+  async sendMessage(): Promise<void> {
+    const trimmedMessage = this.newMessage.trim();
+
+    if (!trimmedMessage || !this.currentUsername || this.isSending) {
       return;
     }
 
-    // 🔒 Validar largo máximo
-    if (this.nuevoMensaje.length > 80) {
+    if (trimmedMessage.length > 80) {
       alert('El mensaje no puede superar los 80 caracteres.');
       return;
     }
 
-    this.enviandoMensaje = true;
-    const mensajeTemp = this.nuevoMensaje;
-    this.nuevoMensaje = ''; // Limpiar input inmediatamente para mejor UX
+    this.isSending = true;
+    const pendingText = trimmedMessage;
+    this.newMessage = ''; // Limpiar el input inmediatamente para una interfaz más ágil
 
     try {
-      console.log('📤 Enviando mensaje...');
-      await this.chatService.enviarMensaje(this.usuarioActual, mensajeTemp);
-      console.log('✅ Mensaje enviado');
-      // El mensaje aparecerá automáticamente vía realtime
+      console.log('📤 Enviando mensaje al servidor...');
+      const savedMessage = await this.chatService.sendMessage(this.currentUsername, pendingText);
+
+      // Inserción directa e inmediata en la vista sin depender exclusivamente de Realtime
+      if (savedMessage) {
+        this.messages.update((currentList) => {
+          if (!currentList.some((m) => m.id === savedMessage.id)) {
+            const updated = [...currentList, savedMessage];
+            setTimeout(() => this.scrollToBottom(), 50);
+            return updated;
+          }
+          return currentList;
+        });
+        this.cdr.markForCheck();
+      }
+      console.log('✅ Mensaje guardado y renderizado con éxito');
     } catch (error) {
-      console.error('❌ Error enviando mensaje:', error);
-      this.nuevoMensaje = mensajeTemp; // Restaurar mensaje si hay error
-      alert('Error al enviar el mensaje. Intenta de nuevo.');
+      console.error('❌ Error al enviar el mensaje:', error);
+      this.newMessage = pendingText; // Restaurar texto si falló
+      alert('Error al enviar el mensaje. Intenta nuevamente.');
     } finally {
-      this.enviandoMensaje = false;
+      this.isSending = false;
+      this.cdr.markForCheck();
     }
   }
 
-  cerrarChat() {
+  /**
+   * Determina si un mensaje pertenece al usuario actual para aplicar los estilos de burbuja correspondiente.
+   */
+  isMyMessage(message: ChatMessage): boolean {
+    if (!message || !this.currentUsername) {
+      return false;
+    }
+
+    const sender = (message.usuario || '').trim().toLowerCase();
+    const currentName = (this.currentUsername || '').trim().toLowerCase();
+    const currentEmail = (this.currentUser?.email || '').trim().toLowerCase();
+
+    return sender === currentName || (currentEmail !== '' && sender === currentEmail);
+  }
+
+  /**
+   * Desplaza el contenedor del chat hasta el último mensaje.
+   */
+  scrollToBottom(): void {
+    try {
+      if (this.messagesContainer?.nativeElement) {
+        const element = this.messagesContainer.nativeElement;
+        element.scrollTop = element.scrollHeight;
+      } else if (typeof document !== 'undefined') {
+        const element = document.querySelector('.chat-mensajes') as HTMLElement;
+        if (element) {
+          element.scrollTop = element.scrollHeight;
+        }
+      }
+    } catch (error) {
+      console.warn('Error al hacer scroll:', error);
+    }
+  }
+
+  /**
+   * Cierra la ventana del chat emitiendo el evento correspondiente.
+   */
+  close(): void {
+    this.closeChat.emit();
     this.cerrar.emit();
   }
 
-  private scrollUltimo() {
-    const container = document.querySelector('.chat-mensajes');
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
+  // Aliases en español para llamadas directas
+  enviar(): Promise<void> {
+    return this.sendMessage();
+  }
+
+  cerrarChat(): void {
+    this.close();
+  }
+
+  scrollUltimo(): void {
+    this.scrollToBottom();
   }
 }

@@ -1,83 +1,112 @@
-<div class="container text-center mt-4">
+<div class="game-screen-wrapper">
+    <div class="container py-4">
 
-    <h1 class="mb-4 text-primary">🎮 Ahorcado</h1>
+        <!-- Tarjeta Principal del Juego -->
+        <div class="game-main-card shadow-lg">
 
-    <!-- Info del juego -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">👤 Jugador</h5>
-                    <p class="card-text fs-5 text-dark">{{ usuario?.nombre }}</p>
+            <!-- Encabezado del Juego -->
+            <div class="game-header text-center mb-4">
+                <span class="game-category-pill">PALABRAS & INGENIO</span>
+                <h1 class="game-main-title">
+                    JUEGO DEL <span class="gradient-text">AHORCADO</span>
+                </h1>
+                <p class="game-subtitle">
+                    Descubre la palabra secreta letra por letra antes de que se agoten tus 3 intentos
+                </p>
+            </div>
+
+            <!-- HUD / Barra de Estado del Jugador -->
+            <div class="game-hud-grid mb-4">
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Jugador</span>
+                        <span class="hud-value text-cyan">{{ usuario?.nombre || 'Gamer' }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Tiempo</span>
+                        <span class="hud-value" [class.hud-warning]="(tiempoRestante$ | async)! <= 20">
+                            {{ tiempoRestante$ | async }}s
+                        </span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Puntos</span>
+                        <span class="hud-value text-gold">{{ puntos }}</span>
+                    </div>
+                </div>
+
+                <div class="hud-item">
+                    <div class="hud-data">
+                        <span class="hud-label">Fallos</span>
+                        <span class="hud-value text-danger">{{ intentosFallidos }} / 3</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Zona de Juego -->
+            @if (!empezarJuego) {
+                <div class="pre-game-box text-center py-5 my-3">
+                    <h3 class="pre-game-title">¿Listo para jugar?</h3>
+                    <p class="pre-game-text">Presiona el botón de inicio para comenzar la ronda contrarreloj.</p>
+                </div>
+            } @else {
+                <!-- Ilustración del Ahorcado con Halo Neón -->
+                <div class="gallows-container mb-4 text-center">
+                    <div class="gallows-glow"></div>
+                    <img [src]="imagenActual" alt="Ahorcado" class="gallows-image shadow-lg" />
+                </div>
+
+                <!-- Palabra Oculta en Cajas de Letras -->
+                <div class="word-container mb-4">
+                    <div class="word-slots">
+                        @for (letra of palabraOculta; track $index) {
+                            <div class="letter-slot" [class.slot-revealed]="letra !== '_'">
+                                {{ letra !== '_' ? letra : '' }}
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Botonera de Letras del Teclado -->
+                <div class="keyboard-container mb-4">
+                    <div class="keyboard-grid">
+                        @for (letra of letras; track letra) {
+                            <button type="button" 
+                                    class="key-button" 
+                                    [disabled]="!juegoActivo || letrasUsadas.includes(letra)"
+                                    (click)="seleccionarLetra(letra)">
+                                {{ letra }}
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Botones de Control al Pie -->
+            <div class="game-controls d-flex justify-content-center gap-3 flex-wrap mt-4 pt-3 border-top border-secondary-subtle">
+                @if (!empezarJuego) {
+                    <button class="btn btn-action-play btn-lg" (click)="empezar()">
+                        <span>Iniciar Partida</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
+                } @else {
+                    <button class="btn btn-action-restart btn-lg" (click)="reiniciarJuego()">
+                        <span>Reiniciar</span>
+                    </button>
+                    <button class="btn btn-action-home btn-lg" (click)="volverHome()">
+                        <span>Volver al Inicio</span>
+                    </button>
+                }
+            </div>
+
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⏳ Tiempo</h5>
-                    <p class="card-text fs-4 text-danger">{{ tiempoRestante$ | async }}s</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">⭐ Puntos</h5>
-                    <p class="card-text fs-4 text-success">{{puntos}}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">❌ Intentos</h5>
-                    <p class="card-text fs-4 text-warning">{{intentosFallidos}} / 3</p>
-                </div>
-            </div>
-        </div>
     </div>
-
-    @if(!empezarJuego){
-        <p class="text-xbox-white">Toque en el boton de jugar para empezar</p>
-    } @else {
-        <!-- Imagen del ahorcado -->
-        <div class="mb-4">
-            <img [src]="imagenActual" alt="Ahorcado" class="img-fluid" style="max-height: 250px;">
-        </div>
-
-        <!-- Palabra -->
-        <h3 class="mb-4 text-uppercase tracking-widest texto">
-            {{palabraOculta.join(' ')}}
-        </h3>
-
-        <!-- Botonera de letras -->
-        <div class="botonera mb-4">
-        @for(letra of letras; track letra){
-            <button 
-            type="button" 
-            class="btn btn-outline-primary fw-bold"
-            [disabled]="!juegoActivo || letrasUsadas.includes(letra)"
-            (click)="seleccionarLetra(letra)">
-            {{letra}}
-            </button>
-        }
-        </div>
-    }
-
-    <!-- Botones de control -->
-    <div class="d-flex justify-content-center gap-3">
-        @if(!empezarJuego){
-            <button class="btn btn-warning btn-lg" (click)="empezar()">▶ Jugar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        } @else {
-            <button class="btn btn-warning btn-lg" (click)="reiniciarJuego()">🔄 Reiniciar</button>
-            <button class="btn bg-xbox-green" (click)="volverHome()">🏠 Volver a home</button>
-        }
-
-    </div>
-
 </div>

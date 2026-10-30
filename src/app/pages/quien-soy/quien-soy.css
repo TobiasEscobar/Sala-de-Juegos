@@ -1,85 +1,414 @@
-.container-total {
-    background-image: url('/background3.jpg');
+/* ==========================================================================
+   🎮 PÁGINA SOBRE MÍ (QUIEN SOY) - ESTILOS GAMING Y GLASSMORPHISM
+   ========================================================================== */
+
+.about-wrapper {
+    min-height: 100vh;
+    padding-bottom: 80px;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(196, 11, 180, 0.2) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.2) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(8, 3, 18, 0.88) 0%, rgba(13, 5, 26, 0.95) 100%),
+        url('/background3.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
-    padding-bottom: 10px;
+    background-attachment: fixed;
+    color: #ffffff;
 }
 
-.card-bio {
-    background-color: #1a1a1a; 
-    color: #f1f1f1;            
-    border-radius: 15px;       
-    border: 2px solid #18e0e7;
-    transition: all 0.3s ease-in-out; 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
-    padding: 20px;             
+/* ==========================================================================
+   👨‍💻 TARJETA DE PERFIL DEL DESARROLLADOR
+   ========================================================================== */
+
+.profile-card {
+    background: rgba(22, 10, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.card-bio img {
-    border: 2px solid #18e0e7;
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00d9ff, #c40bb4, transparent);
+}
+
+/* Avatar con halo */
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.avatar-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    background: #00d9ff;
+    opacity: 0.35;
+    filter: blur(25px);
+    border-radius: 50%;
+}
+
+.avatar-img {
     width: 140px;
     height: 140px;
-    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid #00d9ff;
+    box-shadow: 0 0 25px rgba(0, 217, 255, 0.5);
+    position: relative;
+    z-index: 1;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.card-bio:hover {
-    transform: translateY(-7px);    /* Sube un poco */
-    box-shadow: 0 12px 25px rgba(255, 255, 255, 0.6); /* Sombra más intensa */
-    transition: all 0.3s ease;
+.avatar-img:hover {
+    transform: scale(1.05);
 }
 
-.card-title {
-    text-align: center;
+.avatar-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 2px solid #160a26;
+    z-index: 2;
+    text-transform: uppercase;
 }
 
-.card-text, .p-juego {
-    font-family: 'Arial', sans-serif;
-    text-align: center;
+.dev-name {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+.dev-role {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #00d9ff, #c40bb4 60%, #ff00ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dev-bio {
+    font-size: 0.98rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Grid de Estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.stat-box {
+    background: rgba(10, 4, 18, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    border-color: #00d9ff;
+}
+
+.stat-number {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #00d9ff;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 4px;
+}
+
+/* Botones de acción perfil */
+.btn-github {
+    background: #24292e;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-github:hover {
+    background: #2f363d;
+    color: #ffffff;
+    border-color: #00d9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+}
+
+.btn-home {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-home:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(196, 11, 180, 0.4);
+}
+
+/* ==========================================================================
+   🧩 TARJETA DE REGLAS DEL JUEGO PROPIO (1024)
+   ========================================================================== */
+
+.game-showcase-card {
+    background: rgba(22, 10, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(161, 0, 255, 0.3);
+    border-radius: 28px;
+    padding: 44px 36px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(161, 0, 255, 0.15);
+}
+
+.showcase-badge {
+    display: inline-block;
+    background: rgba(161, 0, 255, 0.2);
+    border: 1px solid rgba(161, 0, 255, 0.4);
+    color: #e0aaff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+}
+
+.showcase-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.showcase-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+/* Cajas de reglas */
+.rule-box {
+    background: rgba(12, 5, 24, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px 20px;
+    position: relative;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.rule-box:hover {
+    transform: translateY(-4px);
+    border-color: rgba(161, 0, 255, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.rule-icon {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.rule-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.rule-text {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+}
+
+.bonus-pill {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 217, 255, 0.15));
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    border-radius: 12px;
+    padding: 8px 14px;
+    color: #00ff88;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-top: 12px;
+    display: inline-block;
+}
+
+/* Teclado visual */
+.keys-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.key-cap {
+    background: linear-gradient(180deg, #2b1842 0%, #150a24 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-bottom: 3px solid rgba(0, 217, 255, 0.5);
+    color: #00d9ff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    padding-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
-/*Juego*/
-
-.card-juego {
-    background-color: #1a1a1a; 
-    color: #f1f1f1;            
-    border-radius: 15px;       
-    padding: 10px;
+/* Píldoras de fusión */
+.fusion-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 
-.titulo-juego{
-    text-align: center;
-    padding-bottom: 30px;
-    font-size: 2em;
+.math-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    color: #ffffff;
 }
 
-.subtitulo-juego {
-    text-align: center;
-    font-size: 1.5em;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    color: #18e0e7;
-    text-shadow: 0 0 8px #18e0e7;
+.math-arrow {
+    color: #c40bb4;
+    font-weight: 800;
+    font-size: 0.9rem;
 }
 
-.lista-juego {
+/* Lista de derrota */
+.defeat-list {
     list-style: none;
-    text-align: center;
     padding: 0;
-    margin-top: 15px;
+    margin: 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.lista-juego li {
-    margin: 5px 0;
+.defeat-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.defeat-icon {
     font-size: 1.1rem;
+    line-height: 1.2;
 }
 
-.bonus {
-    color: #00ffc3;
-    font-weight: bold;
-    text-shadow: 0 0 8px #00ffc3;
+/* Botón CTA juego 1024 */
+.btn-play-1024 {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 14px 32px;
+    border-radius: 14px;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 6px 25px rgba(196, 11, 180, 0.45);
+    transition: all 0.25s ease;
+}
+
+.btn-play-1024:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(196, 11, 180, 0.65);
+}
+
+.text-muted-custom {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .profile-card, .game-showcase-card {
+        padding: 28px 18px;
+    }
+
+    .dev-name {
+        font-size: 1.8rem;
+    }
+
+    .stats-grid {
+        gap: 10px;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .showcase-title {
+        font-size: 1.7rem;
+    }
+
+    .btn-play-1024 {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
 }

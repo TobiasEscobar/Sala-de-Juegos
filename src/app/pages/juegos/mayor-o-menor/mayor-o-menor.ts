@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../../services/auth';
 import { JuegosService } from '../../../services/juegosService';
 import { User } from '../../../clases/user';
-import { ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { JuegosDialog } from '../../../dialogs/juegos-dialog/juegos-dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,13 +21,14 @@ interface Carta {
 
 @Component({
   selector: 'app-mayor-o-menor',
-  imports: [FormatearTiempoPipe],
+  standalone: true,
+  imports: [CommonModule, FormatearTiempoPipe],
   templateUrl: './mayor-o-menor.html',
   styleUrl: './mayor-o-menor.css'
 })
 export class MayorOMenor implements OnInit, OnDestroy {
   
-  //Logica juego
+  // Lógica del juego
   juegoActivo = false;
   juegoTerminado = false;
   intentosFallidos = 0;
@@ -38,83 +39,89 @@ export class MayorOMenor implements OnInit, OnDestroy {
 
   intervaloTemporizador: any;
   startTime!: number;
-  tiempoRestante = 10;
+  tiempoRestante = 60;
 
-  //Cartas
+  // Cartas de la baraja
   mazo: Carta[] = [];
   cartaActual: Carta | null = null;
   cartaSiguiente: Carta | null = null;
 
-  //suscripciones
+  // Usuario y estado
   currentUser: User | null = null;
-  usuario: any;
+  usuario: any = null;
   empezarJuego = false;
-
 
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
     private router: Router,
     private juegoService: JuegosService,
-    private cdr: ChangeDetectorRef) {}
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.usuario = user;
-      console.log("Usuario en mayor-o-menor:", user?.nombre);
+      this.currentUser = user;
+      this.cdr.markForCheck();
     });
 
-    this.juegoService.empezarJuego$.subscribe(async estado => {
+    this.juegoService.empezarJuego$.subscribe(estado => {
       this.empezarJuego = estado;
+      this.cdr.markForCheck();
     });
   }
 
-  ngOnDestroy() {
-    console.log("salio");
+  ngOnDestroy(): void {
+    this.detenerTemporizador();
   }
 
-  //Logica juego
-  empezar() {
-    // Funcion que se activa al clickear en el boton de jugar. Activa la logica del juego
+  // Lógica de juego
+  empezar(): void {
     this.empezarJuego = true;
     this.iniciarJuego();       
   }
 
-  async iniciarJuego() {
+  async iniciarJuego(): Promise<void> {
     this.intentosFallidos = 0;
     this.aciertos = 0;
     this.vidas = 3;
     this.juegoActivo = true;
     this.juegoTerminado = false;
-    this.tiempoRestante = 10;
+    this.tiempoRestante = 60;
     this.startTime = Date.now();
 
-    // cargar cartas
+    // Cargar cartas desde Supabase
     const { data, error }: any = await this.juegoService.cargarCartas();
-    if (error) {
-      console.error("Error cargando cartas", error);
+    if (error || !data) {
+      console.error('Error cargando cartas', error);
       return;
     }
 
     this.mazo = this.mezclarCartas(data);
     this.cartaActual = this.mazo.shift() || null;
     this.iniciarTemporizador();
+
+    this.cdr.markForCheck();
     this.cdr.detectChanges(); 
   }
 
-  iniciarTemporizador() {
+  iniciarTemporizador(): void {
     this.detenerTemporizador();
     this.intervaloTemporizador = setInterval(() => {
       if (!this.juegoActivo) return;
+      
       this.tiempoRestante--;
       if (this.tiempoRestante <= 0) {
         this.finalizarJuego(false);
       }
+      
+      this.cdr.markForCheck();
       this.cdr.detectChanges();
     }, 1000);
   }
 
-  detenerTemporizador() {
+  detenerTemporizador(): void {
     if (this.intervaloTemporizador) {
       clearInterval(this.intervaloTemporizador);
       this.intervaloTemporizador = null;
@@ -122,10 +129,10 @@ export class MayorOMenor implements OnInit, OnDestroy {
   }
 
   mezclarCartas(cartas: Carta[]): Carta[] {
-    return cartas.sort(() => Math.random() - 0.5);
+    return [...cartas].sort(() => Math.random() - 0.5);
   }
 
-  elegir(opcion: 'mayor' | 'menor') {
+  elegir(opcion: 'mayor' | 'menor'): void {
     if (!this.cartaActual || this.mazo.length === 0) return;
 
     this.cartaSiguiente = this.mazo.pop() || null;
@@ -150,39 +157,42 @@ export class MayorOMenor implements OnInit, OnDestroy {
       }
     }
 
-    // pasar a la siguiente
+    // Pasar a la siguiente carta
     this.cartaActual = this.cartaSiguiente;
     this.cartaSiguiente = null;
+
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
-  async finalizarJuego(resultado: boolean) {
+  async finalizarJuego(resultado: boolean): Promise<void> {
+    this.detenerTemporizador();
     this.juegoTerminado = true;
     this.juegoActivo = false;
 
     const endTime = Date.now();
     const duracionSegundos = Math.floor((endTime - this.startTime) / 1000);
 
-    if (resultado)  {
-      this.resultadoPartida = "Ganó";
-    } else {
-      this.resultadoPartida = "Perdió"
+    this.resultadoPartida = resultado ? 'Ganó' : 'Perdió';
+
+    try {
+      await this.juegoService.guardarResultadoMayorMenor(
+        this.usuario?.nombre || 'Gamer Anónimo',
+        this.aciertos,
+        duracionSegundos,
+        this.resultadoPartida,
+        this.intentosFallidos
+      );
+    } catch (err) {
+      console.warn('Error al guardar ranking mayor o menor:', err);
     }
 
-    const guardadoExitoso = await this.juegoService.guardarResultadoMayorMenor(
-      this.usuario?.nombre,
-      this.aciertos,
-      duracionSegundos,
-      this.resultadoPartida,
-      this.intentosFallidos,
-    );
-
-    if (guardadoExitoso) {
-      console.log("Resultado guardado correctamente");
-    }
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
 
     this.dialog.open(JuegosDialog, {
       data: { resultado: this.resultadoPartida, aciertos: this.aciertos }
-    }).afterClosed().subscribe(opcion => {
+    }).afterClosed().subscribe((opcion: string) => {
       if (opcion === 'home') {
         this.router.navigate(['/home']);
       } else if (opcion === 'reintentar') {
@@ -191,7 +201,7 @@ export class MayorOMenor implements OnInit, OnDestroy {
     });
   }
 
-  reiniciarJuego() {
+  reiniciarJuego(): void {
     Swal.fire({
       title: '¿Reiniciar juego?',
       text: 'Se perderá tu progreso actual',
@@ -211,7 +221,7 @@ export class MayorOMenor implements OnInit, OnDestroy {
     });
   }
 
-  volverHome() {
+  volverHome(): void {
     if (this.juegoActivo && !this.juegoTerminado) {
       Swal.fire({
         title: '¿Salir del juego?',
@@ -232,5 +242,4 @@ export class MayorOMenor implements OnInit, OnDestroy {
       this.router.navigate(['/home']);
     }
   }
-
 }

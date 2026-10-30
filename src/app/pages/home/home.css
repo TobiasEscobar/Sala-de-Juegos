@@ -1,253 +1,611 @@
-/* .container-total {
-    background-image: url('/background3.jpg');
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat; 
-}
+/* ==========================================================================
+   🎮 SALA DE JUEGOS - PÁGINA DE INICIO (HOME) - ESTILOS GAMING Y MODERNOS
+   ========================================================================== */
 
-.container-bienvenida p {
-    color: #fff;
-    text-align: center;
-    justify-content: center;
-}
-
-.title-bienvenida{
-    text-align: center;
-    color: #fff;
-    font-size: 3em;
-}
-
-#p-bienvenida{
-    font-size: 1.3em;
-    padding-bottom: 15px;
-}
-
-.title {
-    text-align: center;
-    margin: 20px 0;
-    padding: 10px;
-    font-size: 2em;
-    
-    color: #fff;
-    text-shadow: #ff00ea;
-}
-
-.juego-card {
-    width: 350px;
-    height: 380px;
-    border-radius: 30px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #1a0033, #3a0ca3);
-}
-
-.img-juego {
-    
-    height: auto;
-    padding-top: 10px;
-    max-height: 160px; 
-    object-fit: contain; 
-}
-
-.juego-body-card {
-    color: #fff;
-    padding: 15px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; 
-}
-
-.boton-primario {
-    background-color: #c40bb4;
-    border-radius: 15px;
-    color: black;
-}
-
-.boton-primario:hover {
-    background-color: #e879f9;
-    color: white;
-}
-
-.boton-secundario {
-    background-color: #00d9ff;
-    border-radius: 15px;
-    color: black;
-}
-
-.boton-secundario:hover {
-    background-color: #11b9d6;
-    color: white
-}
-
-
-.chat-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-} */
-
-.container-total {
-    background-image: url('/background3.jpg');
+.home-wrapper {
+    background-image: 
+        radial-gradient(circle at 15% 20%, rgba(196, 11, 180, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 65%, rgba(0, 217, 255, 0.18) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(8, 3, 18, 0.85) 0%, rgba(13, 5, 26, 0.95) 100%),
+        url('/background3.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
-    padding-bottom: 70px;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-bottom: 90px;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.container-bienvenida {
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
-    }
+/* ==========================================================================
+   🌟 HERO BANNER DE BIENVENIDA
+   ========================================================================== */
 
-.title-bienvenida {
-    color: #fff;
-    font-size: 2.5em;
-}
-
-#p-bienvenida {
-    font-size: 1.2em;
-    color: #fff;
-}
-
-.title {
-    text-align: center;
-    margin: 20px 0;
-    font-size: 2em;
-    color: #fff;
-    text-shadow: 1px 1px 5px #ff00ea;
-}
-
-/* Tarjetas de juegos */
-.juego-card {
-    width: 350px;
-    height: 380px;
-    border-radius: 30px;
+.hero-banner {
+    background: rgba(18, 8, 34, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 48px 32px;
+    position: relative;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #1a0033, #3a0ca3);
-    transition: transform 0.2s ease;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.juego-card:hover {
-    transform: scale(1.03);
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c40bb4, #00d9ff, transparent);
 }
 
-.img-juego {
-    max-height: 160px;
-    object-fit: contain;
-    margin-top: 10px;
+.hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #00d9ff;
+    text-transform: uppercase;
 }
 
-.juego-body-card {
-    color: #fff;
-    padding: 15px;
-    text-align: center;
+.hero-pulse {
+    width: 8px;
+    height: 8px;
+    background-color: #00d9ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00d9ff;
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(1.3);
+    }
+}
+
+.hero-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    margin: 12px 0 16px;
+    text-transform: uppercase;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #ff00ea, #c40bb4 45%, #00d9ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 25px rgba(255, 0, 234, 0.35);
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.text-highlight {
+    color: #00d9ff;
+    font-weight: 700;
+}
+
+/* Botones Hero */
+.btn-hero-primary {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 6px 20px rgba(196, 11, 180, 0.4);
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-hero-primary:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(196, 11, 180, 0.6);
+}
+
+.btn-hero-secondary {
+    background: rgba(0, 217, 255, 0.1);
+    color: #00d9ff;
+    border: 1px solid #00d9ff;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-hero-secondary:hover {
+    background: #00d9ff;
+    color: #080312;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 217, 255, 0.45);
+}
+
+.btn-icon {
+    font-size: 1.15rem;
+}
+
+/* ==========================================================================
+   🕹️ SECCIONES Y CABECERAS
+   ========================================================================== */
+
+.section-tag {
+    display: inline-block;
+    color: #c40bb4;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.featured-tag {
+    color: #ffb703;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.section-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   🃏 TARJETAS DE JUEGOS CLÁSICOS (GAME CARDS)
+   ========================================================================== */
+
+.game-card {
+    background: rgba(22, 10, 38, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.boton-primario {
-    background-color: #c40bb4;
-    border-radius: 15px;
-    color: black;
-    font-weight: bold;
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent-color, #c40bb4), transparent);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
 }
 
-.boton-primario:hover {
-    background-color: #e879f9;
-    color: white;
+.game-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(196, 11, 180, 0.25);
 }
 
-.boton-secundario {
-    background-color: #00d9ff;
-    border-radius: 15px;
-    color: black;
-    font-weight: bold;
+.game-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
-.boton-secundario:hover {
-    background-color: #11b9d6;
-    color: white;
+.game-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Botón de chat */
-.chat-toggle {
+.game-badge {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.featured-badge {
+    background: rgba(255, 183, 3, 0.15);
+    border-color: rgba(255, 183, 3, 0.4);
+    color: #ffb703;
+}
+
+/* Imagen del juego */
+.game-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.game-image-glow {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: var(--accent-color, #c40bb4);
+    opacity: 0.2;
+    filter: blur(35px);
+    border-radius: 50%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.game-card:hover .game-image-glow {
+    opacity: 0.4;
+    transform: scale(1.15);
+}
+
+.game-image {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.game-card:hover .game-image {
+    transform: scale(1.06) rotate(-1deg);
+}
+
+/* Contenido de la tarjeta */
+.game-card-body {
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.game-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.game-description {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    min-height: 44px;
+}
+
+/* Tags de características */
+.game-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.feature-tag {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 3px 8px;
+    font-size: 0.73rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+}
+
+.featured-feat-tag {
+    background: rgba(161, 0, 255, 0.12);
+    border-color: rgba(161, 0, 255, 0.25);
+    color: #e0aaff;
+}
+
+/* Botones de acción */
+.game-card-footer {
+    margin-top: auto;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-play {
+    flex-grow: 1;
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 14px rgba(196, 11, 180, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-play:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(196, 11, 180, 0.55);
+}
+
+.btn-rank {
+    background: rgba(0, 217, 255, 0.08);
+    color: #00d9ff;
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-rank:hover {
+    background: #00d9ff;
+    color: #080312;
+    border-color: #00d9ff;
+    transform: translateY(-2px);
+}
+
+.btn-login-required {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-login-required:hover {
+    background: #c40bb4;
+    border-color: #c40bb4;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   👑 TARJETA JUEGO ESPECIAL DESTACADO (1024)
+   ========================================================================== */
+
+.featured-card {
+    background: linear-gradient(145deg, rgba(30, 12, 54, 0.9), rgba(16, 6, 32, 0.95));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(161, 0, 255, 0.35);
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(161, 0, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featured-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(161, 0, 255, 0.35);
+}
+
+.featured-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.featured-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    background: #a100ff;
+    opacity: 0.35;
+    filter: blur(40px);
+    border-radius: 50%;
+}
+
+.featured-image {
+    max-width: 190px;
+    max-height: 190px;
+    object-fit: contain;
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.featured-card:hover .featured-image {
+    transform: scale(1.05);
+}
+
+.featured-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.featured-description {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+/* ==========================================================================
+   💬 BOTÓN FLOTANTE DEL CHAT
+   ========================================================================== */
+
+.floating-chat-host {
+    position: relative;
+    z-index: 1040;
+}
+
+.chat-launcher-btn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #3a0ca3, #7209b7);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 12px 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(58, 12, 163, 0.45);
+    transition: all 0.25s ease;
+    z-index: 1040;
 }
 
-/* 🌙 RESPONSIVE DESIGN */
-@media (max-width: 992px) {
-    .juego-card {
-        width: 300px;
-        height: auto;
-    }
-
-    .title-bienvenida {
-        font-size: 2em;
-    }
-
-    #p-bienvenida {
-        font-size: 1em;
-    }
+.chat-launcher-btn:hover {
+    background: linear-gradient(135deg, #480ca8, #b5179e);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(181, 23, 158, 0.55);
 }
 
-@media (max-width: 768px) {
-    .title {
-        font-size: 1.5em;
+.chat-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.chat-online-indicator {
+    width: 9px;
+    height: 9px;
+    background-color: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00ff88;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   📱 DISEÑO RESPONSIVO (MEDIA QUERIES)
+   ========================================================================== */
+
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 2.6rem;
+    }
+    
+    .hero-banner {
+        padding: 36px 24px;
     }
 
-    .title-bienvenida {
-        font-size: 1.8em;
+    .game-image-wrapper {
+        height: 160px;
     }
 
-    .juego-card {
-        width: 90%;
-        height: auto;
-    }
-
-    .img-juego {
+    .game-image {
+        max-width: 130px;
         max-height: 130px;
     }
 }
 
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.7rem;
+    }
+
+    .featured-title {
+        font-size: 1.6rem;
+    }
+
+    .featured-image {
+        max-width: 140px;
+        max-height: 140px;
+    }
+
+    .chat-launcher-btn {
+        bottom: 18px;
+        right: 18px;
+        padding: 10px 18px;
+        font-size: 0.88rem;
+    }
+}
+
 @media (max-width: 480px) {
-    .title {
-        font-size: 1.3em;
-    }
-
-    .title-bienvenida {
-        font-size: 1.5em;
-    }
-
-    .container-bienvenida {
-        padding: 15px;
-    }
-
-    #p-bienvenida {
-        font-size: 0.9em;
-    }
-
-    .juego-card {
-        width: 100%;
+    .hero-banner {
+        padding: 28px 16px;
         border-radius: 20px;
     }
 
-    .img-juego {
-        max-height: 110px;
+    .hero-title {
+        font-size: 1.7rem;
     }
 
-    .chat-toggle {
-        bottom: 15px;
-        right: 15px;
+    .game-card {
+        padding: 18px;
+    }
+
+    .chat-btn-label {
+        display: none;
+    }
+
+    .chat-launcher-btn {
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .chat-online-indicator {
+        position: absolute;
+        top: 6px;
+        right: 8px;
     }
 }

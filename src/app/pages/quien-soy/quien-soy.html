@@ -1,71 +1,180 @@
-<div class="container-total">
-    <section class="container my-5">
-        @if (loading) {
-            <p>Cargando perfil...</p>
-        } @else if (user) {
+<div class="about-wrapper">
+    <div class="container py-5">
+
+        <!-- Sección de Perfil del Desarrollador -->
+        <section class="profile-section mb-5">
             <div class="row justify-content-center">
-                
-                <div class="col-md-6">
+                <div class="col-12 col-lg-8">
+                    <div class="profile-card shadow-lg text-center">
 
-                    <div class="card text-center card-bio">
+                        @if (loading) {
+                            <div class="loading-state py-5">
+                                <div class="spinner-border text-info mb-3" role="status"></div>
+                                <p class="text-muted-custom">Cargando perfil de desarrollador desde GitHub...</p>
+                            </div>
+                        } @else if (user) {
+                            <!-- Avatar con halo neón -->
+                            <div class="avatar-container mb-3">
+                                <div class="avatar-glow"></div>
+                                <img [src]="user.avatar_url" class="avatar-img" alt="Avatar de Tobias Escobar">
+                                <span class="avatar-badge">Dev</span>
+                            </div>
 
-                        <img [src]="user.avatar_url" class="card-img-top rounded-circle mx-auto mt-3" alt="Avatar">
-
-                        <div class="card-body">
-                            <h2 class="card-title">{{ user.name }}</h2>
+                            <h1 class="dev-name">{{ user.name || 'Tobias Escobar' }}</h1>
+                            <p class="dev-role">
+                                <span class="gradient-text fw-bold">Técnico en Programación</span>
+                            </p>
                             
-                            <p class="card-text">
-                                <strong>Repositorios:</strong> {{ user.public_repos }} |
-                                <strong>Seguidores:</strong> {{ user.followers }} |
-                                <strong>Siguiendo:</strong> {{ user.following }}
+                            @if (user.bio) {
+                                <p class="dev-bio">{{ user.bio }}</p>
+                            } @else {
+                                <p class="dev-bio">
+                                    Técnico en Programación recibido de la UTN, apasionado de la tecnología y la creación de software. 
+                                    Creador de esta plataforma de minijuegos con chat en tiempo real y rankings persistentes.
+                                </p>
+                            }
+
+                            <!-- Grid de Estadísticas de GitHub -->
+                            <div class="stats-grid my-4">
+                                <div class="stat-box">
+                                    <span class="stat-number">{{ user.public_repos }}</span>
+                                    <span class="stat-label">Repositorios</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span class="stat-number">{{ user.followers }}</span>
+                                    <span class="stat-label">Seguidores</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span class="stat-number">{{ user.following }}</span>
+                                    <span class="stat-label">Siguiendo</span>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                <a [href]="user.html_url || 'https://github.com/TobiasEscobar'" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="btn btn-github">
+                                    <span>Ver Perfil de GitHub</span>
+                                </a>
+                                <a routerLink="/home" class="btn btn-home">
+                                    <span>Ir a Sala de Juegos</span>
+                                </a>
+                            </div>
+
+                        } @else {
+                            <div class="text-center py-4">
+                                <p class="text-warning">No se pudo cargar la información desde GitHub.</p>
+                                <a routerLink="/home" class="btn btn-home">Volver al Inicio</a>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Presentación del Juego Propio (1024) -->
+        <section class="game-showcase-section">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div class="game-showcase-card shadow-lg">
+
+                        <!-- Encabezado del Juego Propio -->
+                        <div class="showcase-header text-center mb-4">
+                            <span class="showcase-badge">PROYECTO PROPIO DESTACADO</span>
+                            <h2 class="showcase-title">1024 PUZZLE</h2>
+                            <p class="showcase-subtitle">
+                                Conoce las reglas, mecánicas y secretos del juego de lógica numérica diseñado especialmente para esta sala.
                             </p>
                         </div>
 
+                        <!-- Tarjetas de Información y Reglas -->
+                        <div class="row g-4 mb-4">
+                            
+                            <!-- Objetivo -->
+                            <div class="col-12 col-md-6">
+                                <div class="rule-box h-100">
+                                    <h4 class="rule-title">El Gran Objetivo</h4>
+                                    <p class="rule-text">
+                                        Desplaza y combina casillas del mismo valor numérico hasta alcanzar la casilla con el número <strong>1024</strong>.
+                                    </p>
+                                    <div class="bonus-pill">
+                                        <span>Bonus Especial: <strong>+2048 Puntos</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controles -->
+                            <div class="col-12 col-md-6">
+                                <div class="rule-box h-100">
+                                    <h4 class="rule-title">Cómo Jugar y Controles</h4>
+                                    <p class="rule-text">
+                                        Utiliza las flechas de tu teclado físico o los botones direccionales en pantalla para mover todo el tablero en una dirección:
+                                    </p>
+                                    <div class="keys-container">
+                                        <span class="key-cap">↑</span>
+                                        <div class="d-flex gap-2">
+                                            <span class="key-cap">←</span>
+                                            <span class="key-cap">↓</span>
+                                            <span class="key-cap">→</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fusión y Mecánica -->
+                            <div class="col-12 col-md-6">
+                                <div class="rule-box h-100">
+                                    <h4 class="rule-title">Mecánica de Fusión</h4>
+                                    <p class="rule-text">
+                                        Cuando dos fichas con el mismo número chocan, se fusionan en una sola con el doble de su valor:
+                                    </p>
+                                    <div class="fusion-pills">
+                                        <span class="math-pill">2 + 2 = <strong>4</strong></span>
+                                        <span class="math-arrow">➔</span>
+                                        <span class="math-pill">4 + 4 = <strong>8</strong></span>
+                                        <span class="math-arrow">➔</span>
+                                        <span class="math-pill">... <strong>1024</strong></span>
+                                    </div>
+                                    <small class="text-muted-custom mt-2 d-block">
+                                        En cada movimiento válido aparece una nueva casilla con valor <strong>2</strong> o <strong>4</strong> en un espacio vacío aleatorio.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Condiciones de Derrota -->
+                            <div class="col-12 col-md-6">
+                                <div class="rule-box h-100">
+                                    <h4 class="rule-title">Condiciones de Derrota</h4>
+                                    <p class="rule-text">
+                                        La partida finaliza si ocurre alguna de las siguientes situaciones:
+                                    </p>
+                                    <ul class="defeat-list">
+                                        <li>
+                                            <span><strong>Tiempo agotado:</strong> Si el reloj de la partida llega a 0 segundos.</span>
+                                        </li>
+                                        <li>
+                                            <span><strong>Sin movimientos:</strong> Si el tablero se llena y no hay casillas adyacentes fusionables.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Botón CTA para jugar a 1024 -->
+                        <div class="text-center pt-3">
+                            <a routerLink="/1024" class="btn btn-play-1024">
+                                <span>Aceptar el Desafío y Jugar 1024 Ahora</span>
+                            </a>
+                        </div>
+
                     </div>
-
                 </div>
-
             </div>
-        } @else {
-            <p>No se encontró información del usuario.</p>
-        }
-    </section>
+        </section>
 
-    <section class="container my-5 card-bio">
-        <div class="card card-juego">
-            <div class="card-body">
-                <h2 class="card-title titulo-juego">Mi juego propio: 1024</h2>
-
-                <p class="p-juego">
-                    
-                    El objetivo del juego es alcanzar la casilla con el número <strong>1024</strong> 
-                    combinando casillas con el mismo valor y conseguir también la mayor cantidad de puntos posibles antes de que se termine 
-                    el tiempo o los movimientos. <br><br>
-                    
-                    Al llegar al objetivo, la partida finaliza y otorga 
-                    un <span class="bonus">bonus especial de +2048 puntos</span> por conseguirlo.
-                </p>
-
-                <h3 class="subtitulo-juego">Cómo jugar</h3>
-                <p class="p-juego">
-                    Se puede usar las teclas de dirección del teclado o los botones puestos en pantalla (<strong>↑ ↓ ← →</strong>) 
-                    para mover todas las casillas del tablero para arriba, abajo, derecha o izquierda.  
-                    Cuando dos casillas con el mismo número se tocan, se fusionan en una nueva con la suma de ambos valores. 
-                    <br><br> Ejemplo: una casilla con valor 2 con otra casilla de valor 2, creara una casilla de valor 4 y si esta se combina con otro 4, 
-                    creara otra casilla con valor 8 y asi sucesivamente. Siempre es con multiplos de 2. <br><br>
-                    En cada movimiento legal (es decir, que mueva aunque sea una ficha para alguna dirección) <span>SIEMPRE</span> aparecerá una nueva casilla 
-                    con el número <strong>2</strong> o <strong>4</strong> en una posición vacía aleatoria.  
-
-                </p>
-
-                <h3 class="subtitulo-juego">Se puede perder de dos formas</h3>
-                <ul class="lista-juego">
-                    <li>⏳ Si se acaba el tiempo.</li>
-                    <li>🚫 Si ya no quedan movimientos posibles.</li>
-                </ul>
-                
-            </div>
-        </div>
-    </section>
+    </div>
 </div>
-

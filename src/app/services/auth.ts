@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { Supabase } from './supabase';
@@ -9,68 +8,77 @@ import { User } from '../clases/user';
   providedIn: 'root'
 })
 export class AuthService {
-
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
 
   isLoggedIn$ = this._isLoggedIn.asObservable();
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private supabaseService:Supabase, private router:Router) { 
+  constructor(private supabaseService: Supabase, private router: Router) {
     /**
-     * AuthService constructor
-     * @param supabaseService Wrapper para las llamadas a Supabase
-     * @param router Router de Angular para navegar según el estado de auth
+     * Constructor de AuthService.
      * Inicializa la escucha de cambios de sesión para mantener el estado
      * de autenticación en la aplicación.
      */
     this.checkChange();
-    }
+  }
 
-    async loadUserFromSession() {
-      /**
-       * Carga la información del usuario asociado a la sesión actual.
-       * - Consulta a Supabase para obtener el user desde auth.
-       * - Si existe, busca en la tabla `usuarios` los datos adicionales
-       *   (por ejemplo nombre, id_usuario) y actualiza `currentUserSubject`.
-       * Manejo de errores: registra en consola y retorna si falla la consulta.
-       */
-      const { data: sessionData } = await this.supabaseService.supabase.auth.getUser();
+  async loadUserFromSession(): Promise<User | null> {
+    /**
+     * Carga la información del usuario asociado a la sesión actual.
+     * - Consulta a Supabase para obtener el usuario de autenticación.
+     * - Si existe, busca en la tabla `usuarios` los datos adicionales (nombre, id, edad).
+     * - Si la consulta a la tabla `usuarios` falla o no tiene registros, genera un usuario
+     *   de respaldo con los datos de auth para no bloquear funciones como el chat.
+     */
+    const { data: sessionData } = await this.supabaseService.supabase.auth.getUser();
 
-      if (sessionData?.user) {
-        const id = sessionData.user.id;
-        const { data: userInfo, error } = await this.supabaseService.supabase
-          .from('usuarios')
-          .select('*')
-          .eq('user_id', id)
-          .single();
-        
-        if (error) {
-          console.error('Error al cargar usuario:', error);
-          return;
-        }
+    if (sessionData?.user) {
+      const authUserId = sessionData.user.id;
+      const { data: userInfo, error } = await this.supabaseService.supabase
+        .from('usuarios')
+        .select('*')
+        .eq('user_id', authUserId)
+        .single();
 
-        if (userInfo) {
-          const user = new User(userInfo.id_usuario, userInfo.userId, userInfo.nombre, userInfo.email, userInfo.edad);
-          this.currentUserSubject.next(user);
-        }
+      if (error) {
+        console.warn('No se encontraron datos en tabla usuarios o hubo un error:', error.message);
+        const fallbackEmail = sessionData.user.email || '';
+        const fallbackName = sessionData.user.user_metadata?.['nombre'] || fallbackEmail.split('@')[0] || 'Usuario';
+        const fallbackUser = new User(0, authUserId, fallbackName, fallbackEmail, 0);
+        this.currentUserSubject.next(fallbackUser);
+        return fallbackUser;
+      }
+
+      if (userInfo) {
+        const userDbId = userInfo.id ?? userInfo.id_usuario ?? 0;
+        const userId = userInfo.user_id ?? userInfo.userId ?? authUserId;
+        const userName = userInfo.nombre?.trim() || sessionData.user.user_metadata?.['nombre'] || userInfo.email?.split('@')[0] || 'Usuario';
+        const userEmail = userInfo.email || sessionData.user.email || '';
+        const userAge = userInfo.edad ?? 0;
+
+        const user = new User(userDbId, userId, userName, userEmail, userAge);
+        this.currentUserSubject.next(user);
+        return user;
       }
     }
-  
-      getCurrentUser(): User | null {
-      /**
-       * Devuelve el usuario actual (sincrónico) si ya fue cargado.
-       * @returns Instancia de `User` o `null` si no hay usuario.
-       */
-      return this.currentUserSubject.value;
-    }
-  
 
-  private async checkChange(){
+    return null;
+  }
+
+  getCurrentUser(): User | null {
+    /**
+     * Devuelve el usuario actual (sincrónico) si ya fue cargado.
+     * @returns Instancia de `User` o `null` si no hay usuario.
+     */
+    return this.currentUserSubject.value;
+  }
+
+  private async checkChange(): Promise<void> {
     /**
      * Registra un listener para cambios en el estado de autenticación.
      * - Cuando hay sesión, marca `_isLoggedIn` como true y carga el usuario.
-     * - Cuando no hay sesión, marca `_isLoggedIn` como false.
+     * - Cuando no hay sesión, marca `_isLoggedIn` como false y limpia el usuario.
      */
     this.supabaseService.supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -78,6 +86,7 @@ export class AuthService {
         this.loadUserFromSession();
       } else {
         this._isLoggedIn.next(false);
+        this.currentUserSubject.next(null);
       }
     });
   }
@@ -87,22 +96,16 @@ export class AuthService {
      * Inicia sesión usando el wrapper `Supabase.login`.
      * - Si el login es exitoso, intenta cargar la información del usuario
      *   desde la sesión y actualiza `currentUserSubject`.
-     * @param email Correo del usuario
-     * @param password Contraseña
-     * @returns La respuesta del wrapper de Supabase (session/user)
      */
-    const data = await this.supabaseService.login(email, password); 
-    await this.loadUserFromSession(); // actualizar currentUserSubject
+    const data = await this.supabaseService.login(email, password);
+    await this.loadUserFromSession();
     return data;
   }
 
   async signUp(email: string, password: string) {
     /**
      * Registra un usuario nuevo en Supabase (autenticación).
-     * Esto únicamente crea la cuenta en el sistema de auth. 
-     * @param email Correo a registrar
-     * @param password Contraseña
-     * @returns La respuesta del signUp de Supabase
+     * Esto únicamente crea la cuenta en el sistema de auth.
      */
     return await this.supabaseService.supabase.auth.signUp({ email, password });
   }
@@ -110,8 +113,6 @@ export class AuthService {
   async getUser() {
     /**
      * Obtiene el objeto `user` desde Supabase (envuelto en la respuesta `data`).
-     * Usado por código que necesita la estructura completa retornada por Supabase.
-     * @returns Objeto con la propiedad `data` que contiene `user`.
      */
     const { data } = await this.supabaseService.supabase.auth.getUser();
     return { data };
@@ -120,9 +121,6 @@ export class AuthService {
   async signOut() {
     /**
      * Cierra la sesión del usuario en Supabase y limpia el estado local.
-     * - Actualiza `_isLoggedIn` y `currentUserSubject` cuando la salida es
-     *   exitosa.
-     * @returns Objeto con `error` si ocurrió algún problema.
      */
     const { error } = await this.supabaseService.supabase.auth.signOut();
 
@@ -137,7 +135,6 @@ export class AuthService {
   async getSession() {
     /**
      * Devuelve la promesa con la sesión actual desde Supabase.
-     * @returns Promesa con la información de la sesión (access token, user, etc.)
      */
     return this.supabaseService.supabase.auth.getSession();
   }

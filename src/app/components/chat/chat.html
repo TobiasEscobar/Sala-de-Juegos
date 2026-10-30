@@ -1,46 +1,54 @@
-<div class="chat-container shadow">
-    <div class="chat-header bg-dark text-white d-flex justify-content-between align-items-center p-2">
-        <span>Chat</span>
-        <button class="btn btn-sm btn-danger" (click)="cerrarChat()">X</button>
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="d-flex align-items-center gap-2">
+            <span class="chat-status-dot" title="En línea"></span>
+            <span class="chat-title">Chat de la Sala</span>
+        </div>
+        <button class="chat-close-btn" (click)="close()" aria-label="Cerrar chat">✕</button>
     </div>
 
-    <div class="chat-mensajes flex-grow-1 p-2 overflow-auto">
-        @if (mensajes().length === 0) {
-            <div class="text-center text-muted p-3">
-                No hay mensajes aún. ¡Sé el primero en escribir!
+    <div class="chat-mensajes" #messagesContainer>
+        @if (messages().length === 0) {
+            <div class="chat-empty-state">
+                <p class="mb-0">No hay mensajes aún.</p>
+                <small class="text-muted">Sé el primero en escribir.</small>
             </div>
         }
         
-        @for (m of mensajes(); track m.id) {
-            <div [class.mi-mensaje]="m.usuario === usuarioActual" 
-                [class.otro-mensaje]="m.usuario !== usuarioActual"
-                class="mensaje-item mb-2 p-2 rounded">
-                <div class="fw-bold">{{ m.usuario }}</div>
-                <div>{{ m.mensaje }}</div>
-                <small class="text-muted">{{ m.fecha | date:'short' }}</small>
+        @for (m of messages(); track m.id) {
+            <div [class.mi-mensaje]="isMyMessage(m)" 
+                 [class.otro-mensaje]="!isMyMessage(m)"
+                 class="mensaje-item">
+                <div class="mensaje-usuario">{{ m.usuario }}</div>
+                <div class="mensaje-texto">{{ m.mensaje }}</div>
+                <small class="mensaje-fecha">
+                    {{ m.fecha ? (m.fecha | date:'dd/MM HH:mm') : '' }}
+                </small>
             </div>
         }
     </div>
 
-    <div class="chat-input d-flex p-2">
-        @if (usuarioActual) {
-            <input [(ngModel)]="nuevoMensaje" 
-                    (keyup.enter)="enviar()" 
-                    class="form-control me-2" 
-                    placeholder="Escribe un mensaje..."
-                    maxlength="80"
-                    [disabled]="!usuarioActual || enviandoMensaje" />
-                    <small class="text-muted ms-1">
-                    {{ nuevoMensaje.length }}/80
-                    </small>
-            <button class="btn btn-primary" 
-                    (click)="enviar()"
-                    [disabled]="!nuevoMensaje.trim() || !usuarioActual || enviandoMensaje">
-                {{ enviandoMensaje ? 'Enviando...' : 'Enviar' }}
-            </button>
-
+    <div class="chat-input-container">
+        @if (currentUsername) {
+            <div class="d-flex align-items-center gap-2">
+                <input [(ngModel)]="newMessage" 
+                       (keyup.enter)="sendMessage()" 
+                       class="form-control form-control-sm chat-input" 
+                       placeholder="Escribe un mensaje..."
+                       maxlength="80"
+                       [disabled]="isSending" />
+                <button class="btn btn-primary btn-sm chat-send-btn px-3" 
+                        (click)="sendMessage()"
+                        [disabled]="!newMessage.trim() || isSending">
+                    {{ isSending ? '...' : 'Enviar' }}
+                </button>
+            </div>
+            <div class="chat-status-bar">
+                <span>Conectado como: <strong>{{ currentUsername }}</strong></span>
+                <span>{{ newMessage.length }}/80</span>
+            </div>
         } @else {
-            <div class="alert alert-info w-100 mb-0">
+            <div class="alert alert-info py-2 px-3 mb-0 small text-center w-100">
                 Debes iniciar sesión para enviar mensajes
             </div>
         }

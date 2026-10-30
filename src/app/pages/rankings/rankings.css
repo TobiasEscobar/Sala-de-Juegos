@@ -1,150 +1,414 @@
-.container-total{
-    border: 2px solid #18e0e7;
-    transition: all 0.3s ease-in-out; 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
-    padding: 10px;
+/* ==========================================================================
+   PÁGINA DE RANKINGS - ESTILOS GAMING Y LEADERBOARD MODERNO
+   ========================================================================== */
+
+.rankings-wrapper {
+    min-height: 100vh;
+    padding-bottom: 70px;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(196, 11, 180, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 90% 70%, rgba(0, 217, 255, 0.2) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(8, 3, 18, 0.88) 0%, rgba(13, 5, 26, 0.95) 100%),
+        url('/background3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #ffffff;
+}
+
+.rankings-card {
+    background: rgba(22, 10, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.rankings-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #c40bb4, #00d9ff, transparent);
+}
+
+.rankings-category-pill {
+    display: inline-block;
+    background: rgba(255, 183, 3, 0.12);
+    border: 1px solid rgba(255, 183, 3, 0.35);
+    color: #ffb703;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 14px;
     border-radius: 20px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
 }
 
-.container-total:hover{
-    transform: translateY(-7px);    /* Sube un poco */
-    box-shadow: 0 12px 25px rgba(255, 255, 255, 0.6); /* Sombra más intensa */
-    transition: all 0.3s ease;
+.rankings-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
 }
 
-
-.tabla-ranking {
-    font-size: 0.95rem;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 2px solid #444;
+.gradient-text {
+    background: linear-gradient(135deg, #ffb703, #c40bb4 60%, #00d9ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.tabla-ranking thead th {
-    border: 2px solid #000;
+.rankings-subtitle {
     font-size: 1rem;
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.tabla-ranking tbody td {
-    border: 1px solid #555;
-    vertical-align: middle;
+.game-highlight {
+    color: #00d9ff;
+    font-weight: 700;
 }
 
-.ranking-row {
+/* ==========================================================================
+   PESTAÑAS SELECTORAS DE JUEGO (GAME TABS)
+   ========================================================================== */
+
+.game-tabs-container {
+    display: flex;
+    justify-content: center;
+}
+
+.game-tabs {
+    display: flex;
+    background: rgba(10, 4, 18, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 6px;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-game-tab {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.btn-game-tab:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-game-tab.active {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(196, 11, 180, 0.45);
+}
+
+/* ==========================================================================
+   BARRA DE ORDENAMIENTO
+   ========================================================================== */
+
+.sort-bar {
+    background: rgba(10, 4, 18, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sort-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-sort-pill {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 14px;
     transition: all 0.2s ease;
 }
 
-.tabla-ranking tbody tr.ranking-row:hover,
-.tabla-ranking tbody tr.ranking-row:hover td {
-    background-color: rgba(140, 4, 145, 0.35) !important;
+.btn-sort-pill:hover {
+    background: rgba(0, 217, 255, 0.15);
+    border-color: #00d9ff;
+    color: #00d9ff;
 }
 
-/* Estilos para el podio - aplicados por la directiva */
-/* sobrescribir Bootstrap */
-.tabla-ranking tbody tr.ranking-row.posicion-oro,
-.tabla-ranking tbody tr.ranking-row.posicion-oro td {
-    background-color: rgba(255, 215, 0, 0.2) !important;
+.btn-sort-pill.active {
+    background: #00d9ff;
+    border-color: #00d9ff;
+    color: #080312;
+    box-shadow: 0 0 12px rgba(0, 217, 255, 0.4);
 }
 
-.tabla-ranking tbody tr.ranking-row.posicion-oro {
-    border-left: 4px solid gold !important;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
+/* ==========================================================================
+   PODIO VISUAL (TOP 3)
+   ========================================================================== */
+
+.podium-card {
+    background: rgba(15, 6, 28, 0.75);
+    border-radius: 20px;
+    padding: 20px 12px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s ease;
 }
 
-.tabla-ranking tbody tr.ranking-row.posicion-plata,
-.tabla-ranking tbody tr.ranking-row.posicion-plata td {
-    background-color: rgba(192, 192, 192, 0.2) !important;
+.podium-card:hover {
+    transform: translateY(-4px);
 }
 
-.tabla-ranking tbody tr.ranking-row.posicion-plata {
-    border-left: 4px solid silver !important;
-    box-shadow: 0 0 15px rgba(192, 192, 192, 0.5) !important;
+.podium-gold {
+    border: 2px solid #ffd700;
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.15) 0%, rgba(15, 6, 28, 0.85) 100%);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.25);
+    padding-top: 28px;
+    padding-bottom: 28px;
 }
 
-.tabla-ranking tbody tr.ranking-row.posicion-bronce,
-.tabla-ranking tbody tr.ranking-row.posicion-bronce td {
-    background-color: rgba(205, 127, 50, 0.2) !important;
+.podium-silver {
+    border: 2px solid #c0c0c0;
+    background: linear-gradient(180deg, rgba(192, 192, 192, 0.12) 0%, rgba(15, 6, 28, 0.85) 100%);
 }
 
-.tabla-ranking tbody tr.ranking-row.posicion-bronce {
-    border-left: 4px solid #cd7f32 !important;
-    box-shadow: 0 0 15px rgba(205, 127, 50, 0.5) !important;
+.podium-bronze {
+    border: 2px solid #cd7f32;
+    background: linear-gradient(180deg, rgba(205, 127, 50, 0.12) 0%, rgba(15, 6, 28, 0.85) 100%);
 }
 
-/* Animación para posiciones del podio */
-.podium-position {
-    animation: podiumShine 3s ease-in-out infinite;
+.podium-rank-number {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 6px;
+    line-height: 1;
+    color: #e2e8f0;
 }
 
-@keyframes podiumShine {
-    0%, 100% { 
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); 
-    }
-    50% { 
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); 
-    }
+.rank-number-gold {
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
 }
 
-.medalla {
-    font-size: 1.4rem;
+.podium-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.podium-score {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #00d9ff;
+    display: block;
+}
+
+.gold-score {
+    color: #ffd700;
+    font-size: 1.3rem;
+}
+
+.podium-time {
+    font-size: 0.78rem;
+    opacity: 0.7;
+}
+
+/* ==========================================================================
+   TABLA DE CLASIFICACIÓN MODERNA
+   ========================================================================== */
+
+.custom-table-wrapper {
+    background: rgba(12, 5, 24, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.custom-ranking-table {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+.custom-ranking-table thead tr {
+    background: rgba(196, 11, 180, 0.18) !important;
+    border-bottom: 2px solid rgba(196, 11, 180, 0.4);
+}
+
+.custom-ranking-table thead th {
+    padding: 16px 14px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #00d9ff;
+    background: transparent !important;
+    border: none;
+}
+
+.ranking-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+}
+
+.ranking-row td {
+    padding: 14px;
+    background: transparent !important;
+    border: none;
+    font-size: 0.95rem;
+}
+
+.ranking-row:hover td {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Resaltado del podio por directiva */
+.ranking-row.posicion-oro td {
+    background: rgba(255, 215, 0, 0.08) !important;
+}
+
+.ranking-row.posicion-oro {
+    border-left: 4px solid #ffd700;
+}
+
+.ranking-row.posicion-plata td {
+    background: rgba(192, 192, 192, 0.06) !important;
+}
+
+.ranking-row.posicion-plata {
+    border-left: 4px solid #c0c0c0;
+}
+
+.ranking-row.posicion-bronce td {
+    background: rgba(205, 127, 50, 0.06) !important;
+}
+
+.ranking-row.posicion-bronce {
+    border-left: 4px solid #cd7f32;
+}
+
+/* Badges y elementos de tabla */
+.rank-pos-badge {
     display: inline-block;
-    animation: pulse 2s ease-in-out infinite;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+.rank-pos-badge.pos-top {
+    font-size: 1.1rem;
+    color: #00d9ff;
 }
 
-.table-responsive {
-    max-height: 600px;
-    overflow-y: auto;
+.player-name {
+    font-weight: 700;
+    color: #ffffff;
 }
 
-.table-responsive::-webkit-scrollbar {
-    width: 10px;
+.score-badge {
+    background: rgba(255, 183, 3, 0.15);
+    border: 1px solid rgba(255, 183, 3, 0.35);
+    color: #ffd166;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    display: inline-block;
 }
 
-.table-responsive::-webkit-scrollbar-track {
-    background: #2a2a2a;
-    border-radius: 5px;
+.text-muted-custom {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.88rem;
 }
 
-.table-responsive::-webkit-scrollbar-thumb {
-    background: rgb(140, 4, 145);
-    border-radius: 5px;
+/* Estado vacío */
+.empty-ranking-state {
+    padding: 40px 20px;
+    text-align: center;
 }
 
-.table-responsive::-webkit-scrollbar-thumb:hover {
-    background: rgb(180, 4, 185);
+.empty-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
 }
 
-/* Botones de ordenamiento */
-.btn-orden {
-    background-color: #2a2a2a;
-    color: #fff;
-    border: 2px solid #555;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+.empty-subtitle {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin: 0 auto 16px;
 }
 
-.btn-orden:hover {
-    background-color: rgba(140, 4, 145, 0.3);
-    border-color: rgb(140, 4, 145);
-    color: #fff;
+/* Botón jugar juego actual */
+.btn-play-current {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(196, 11, 180, 0.4);
+    transition: all 0.2s ease;
+}
+
+.btn-play-current:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    color: #ffffff;
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(196, 11, 180, 0.6);
 }
 
-.btn-orden.active {
-    background-color: rgb(140, 4, 145);
-    border-color: rgb(140, 4, 145);
-    color: #fff;
-    font-weight: bold;
-    box-shadow: 0 0 15px rgba(140, 4, 145, 0.5);
+.link-back {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
-.btn-orden i {
-    font-size: 0.85rem;
+.link-back:hover {
+    color: #00d9ff;
+}
+
+@media (max-width: 768px) {
+    .rankings-card {
+        padding: 26px 16px;
+    }
+
+    .rankings-title {
+        font-size: 1.8rem;
+    }
+
+    .btn-game-tab {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+
+    .podium-name {
+        font-size: 0.85rem;
+    }
+
+    .podium-score {
+        font-size: 0.95rem;
+    }
 }

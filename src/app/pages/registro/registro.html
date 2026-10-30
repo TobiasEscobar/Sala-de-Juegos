@@ -1,47 +1,130 @@
-<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 font-inter">
-    <form [formGroup]="usuarioForm" (ngSubmit)="crearUsuario()" class="w-100" style="max-width: 1000px;">
-        <div class="bg-xbox-section text-xbox-white p-4 py-lg-5 px-lg-5 container-registro">
+<div class="register-wrapper">
+    <div class="register-card-container">
+        <div class="register-card shadow-lg">
 
-            <h2  class="display-4 text-center text-xbox-white">Crea tu cuenta</h2>
-            <p  class="text-center text-xbox-green">Completa tus datos para poder comenzar</p>
-            
-            <div class="row pt-5">
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">NOMBRE</label>
-                    <input type="text" class="form-control bg-dark text-xbox-white border-0" name="nombre" placeholder="Nombre" formControlName="nombre">
-                </div>
+            <!-- Encabezado de la tarjeta -->
+            <div class="register-header text-center">
+                <span class="register-category-pill">REGISTRO DE USUARIO</span>
+                <h1 class="register-title">
+                    CREAR <span class="gradient-text">CUENTA</span>
+                </h1>
+                <p class="register-subtitle">
+                    Regístrate para guardar tus récords, participar del ranking y usar el chat en vivo
+                </p>
+            </div>
 
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">APELLIDO</label>
-                    <input type="text" class="form-control bg-dark text-xbox-white border-0" name="apellido" placeholder="Apellido" formControlName="apellido">
-                </div>
+            <!-- Formulario de Registro -->
+            <form [formGroup]="usuarioForm" (ngSubmit)="crearUsuario()" class="register-form">
+                <div class="row g-3">
+                    
+                    <!-- Nombre -->
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" 
+                               class="form-control custom-input" 
+                               placeholder="Mínimo 4 letras" 
+                               formControlName="nombre"
+                               [class.is-invalid]="usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched" />
+                        @if (usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched) {
+                            <small class="error-text">Nombre obligatorio (min 4 letras).</small>
+                        }
+                    </div>
 
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">CORREO</label>
-                    <input type="email" class="form-control bg-dark text-xbox-white border-0" name="email" placeholder="Correo" formControlName="email">
-                </div>
-                
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">EDAD</label>
-                    <input type="text" class="form-control bg-dark text-xbox-white border-0" name="edad" placeholder="Edad" formControlName="edad">
-                </div>
+                    <!-- Apellido -->
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" 
+                               class="form-control custom-input" 
+                               placeholder="Mínimo 4 letras" 
+                               formControlName="apellido"
+                               [class.is-invalid]="usuarioForm.get('apellido')?.invalid && usuarioForm.get('apellido')?.touched" />
+                        @if (usuarioForm.get('apellido')?.invalid && usuarioForm.get('apellido')?.touched) {
+                            <small class="error-text">Apellido obligatorio (min 4 letras).</small>
+                        }
+                    </div>
 
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">CONTRASEÑA</label>
-                    <input type="password" class="form-control bg-dark text-xbox-white border-0" name="password" placeholder="*******" formControlName="password">
-                </div>
+                    <!-- Correo Electrónico -->
+                    <div class="col-12 col-md-8">
+                        <label class="form-label">Correo Electrónico</label>
+                        <input type="email" 
+                               class="form-control custom-input" 
+                               placeholder="tu_email@ejemplo.com" 
+                               formControlName="email"
+                               [class.is-invalid]="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched" />
+                        @if (usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched) {
+                            <small class="error-text">Correo electrónico inválido.</small>
+                        }
+                    </div>
 
-                <div class="col-12 col-lg-6 mb-4">
-                    <label class="form-label fw-bold text-xbox-gray">CONFIRMAR CONTRASEÑA</label>
-                    <input type="password" class="form-control bg-dark text-xbox-white border-0" name="passwordConfirm" placeholder="*******" formControlName="passwordConfirm">
+                    <!-- Edad -->
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">Edad</label>
+                        <input type="number" 
+                               class="form-control custom-input" 
+                               placeholder="Ej: 21" 
+                               min="8" 
+                               max="99" 
+                               formControlName="edad"
+                               [class.is-invalid]="usuarioForm.get('edad')?.invalid && usuarioForm.get('edad')?.touched" />
+                        @if (usuarioForm.get('edad')?.invalid && usuarioForm.get('edad')?.touched) {
+                            <small class="error-text">Mayor a 8 años.</small>
+                        }
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" 
+                               class="form-control custom-input" 
+                               placeholder="Mínimo 6 caracteres" 
+                               formControlName="password"
+                               [class.is-invalid]="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched" />
+                        @if (usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched) {
+                            <small class="error-text">Mínimo 6 caracteres.</small>
+                        }
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" 
+                               class="form-control custom-input" 
+                               placeholder="Repite la contraseña" 
+                               formControlName="passwordConfirm"
+                               [class.is-invalid]="(usuarioForm.get('passwordConfirm')?.invalid || usuarioForm.errors?.['passwordMismatch']) && usuarioForm.get('passwordConfirm')?.touched" />
+                        @if (usuarioForm.errors?.['passwordMismatch'] && usuarioForm.get('passwordConfirm')?.touched) {
+                            <small class="error-text">Las contraseñas no coinciden.</small>
+                        }
+                    </div>
+
+                    <!-- Botón de Registro -->
+                    <div class="col-12 mt-4 text-center">
+                        <button type="submit" 
+                                class="btn btn-register-submit w-100" 
+                                [disabled]="isSubmitting()">
+                            @if (isSubmitting()) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                Creando cuenta...
+                            } @else {
+                                <span>Registrar Cuenta y Empezar a Jugar</span>
+                            }
+                        </button>
+                    </div>
 
                 </div>
+            </form>
 
-                <div class="d-flex justify-content-center mt-5">        
-                <button type="submit" class="btn bg-xbox-green text-xbox-white px-5 py-2 w-50" style="border-radius: 50px;">Registrarse</button>
-                </div>
+            <!-- Navegación y pie de tarjeta -->
+            <div class="register-footer text-center mt-4 pt-3 border-top border-secondary-subtle">
+                <p class="mb-2 text-muted-custom">
+                    ¿Ya tienes una cuenta registrada? 
+                    <a routerLink="/login" class="link-highlight">Inicia sesión aquí</a>
+                </p>
+                <a routerLink="/home" class="link-back">
+                    Volver a la Sala de Juegos
+                </a>
             </div>
 
         </div>
-    </form>
+    </div>
 </div>

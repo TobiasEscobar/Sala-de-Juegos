@@ -1,120 +1,179 @@
-<section class="container my-5" >
-    <div class="bg-dark p-5 text-white  d-flex flex-column container-total">
-        
-        <h1 style="color:rgb(140, 4, 145)" class="display-4 fw-bold text-center my-4">
-            RANKING {{ getNombreJuego(juegoActual()) }}
-        </h1>
+<div class="rankings-wrapper">
+    <div class="container py-5">
+        <div class="rankings-card shadow-lg">
 
-        <!-- Botones de selección de juego -->
-        <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
-            <button 
-                [disabled]="juegoActual() === 'ahorcado'"
-                (click)="traerRanking('ahorcado')"
-                class="btn btn-ranking-tab text-xbox-white">
-                Ahorcado
-            </button>
-            <button 
-                [disabled]="juegoActual() === 'mayor_o_menor'"
-                (click)="traerRanking('mayor_o_menor')"
-                class="btn btn-ranking-tab text-xbox-white">
-                Mayor Menor
-            </button>
-            <button 
-                [disabled]="juegoActual() === 'preguntados'"
-                (click)="traerRanking('preguntados')"
-                class="btn btn-ranking-tab text-xbox-white">
-                Preguntados
-            </button>
-            <button 
-                [disabled]="juegoActual() === 'juego_propio'"
-                (click)="traerRanking('juego_propio')"
-                class="btn btn-ranking-tab text-xbox-white">
-                1024
-            </button>
-        </div>
+            <!-- Encabezado de la Sección -->
+            <div class="rankings-header text-center mb-4">
+                <span class="rankings-category-pill">CLASIFICACIÓN GLOBAL</span>
+                <h1 class="rankings-title">
+                    TABLA DE <span class="gradient-text">CLASIFICACIÓN</span>
+                </h1>
+                <p class="rankings-subtitle">
+                    Los mejores puntajes y récords de la comunidad en 
+                    <strong class="game-highlight">{{ getNombreJuego(juegoActual()) }}</strong>
+                </p>
+            </div>
 
-        <!-- Botones de ordenamiento -->
-        <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
-            <button 
-                [class.active]="ordenActual() === 'puntos_desc'"
-                (click)="cambiarOrden('puntos_desc')"
-                class="btn btn-sm btn-orden">
-                <i class="bi bi-trophy-fill me-1"></i>
-                Mejor Puntaje
-            </button>
-            <button 
-                [class.active]="ordenActual() === 'tiempo_asc'"
-                (click)="cambiarOrden('tiempo_asc')"
-                class="btn btn-sm btn-orden">
-                <i class="bi bi-clock-fill me-1"></i>
-                Mejor Tiempo
-            </button>
-            <button 
-                [class.active]="ordenActual() === 'fecha_desc'"
-                (click)="cambiarOrden('fecha_desc')"
-                class="btn btn-sm btn-orden">
-                <i class="bi bi-calendar-fill me-1"></i>
-                Más Reciente
-            </button>
-        </div>
+            <!-- Selector de Juego (Pestañas Segmentadas) -->
+            <div class="game-tabs-container mb-4">
+                <div class="game-tabs">
+                    <button type="button"
+                            [class.active]="juegoActual() === 'ahorcado'"
+                            (click)="traerRanking('ahorcado')"
+                            class="btn-game-tab">
+                        <span>Ahorcado</span>
+                    </button>
+                    <button type="button"
+                            [class.active]="juegoActual() === 'mayor_o_menor'"
+                            (click)="traerRanking('mayor_o_menor')"
+                            class="btn-game-tab">
+                        <span>Mayor o Menor</span>
+                    </button>
+                    <button type="button"
+                            [class.active]="juegoActual() === 'preguntados'"
+                            (click)="traerRanking('preguntados')"
+                            class="btn-game-tab">
+                        <span>Preguntados</span>
+                    </button>
+                    <button type="button"
+                            [class.active]="juegoActual() === 'juego_propio'"
+                            (click)="traerRanking('juego_propio')"
+                            class="btn-game-tab">
+                        <span>1024</span>
+                    </button>
+                </div>
+            </div>
 
-        <div class="table-responsive">
-            <table class="table table-dark table-bordered tabla-ranking">
-                <thead>
-                    <tr class="bg-xbox-green text-dark fw-bold">
-                        <th class="text-center py-3">POS</th>
-                        <th class="text-center py-3">NOMBRE</th>
-                        <th class="text-center py-3">
-                            {{ esAciertos() ? 'ACIERTOS' : 'PUNTOS' }}
-                            @if(ordenActual() === 'puntos_desc' || ordenActual() === 'tiempo_asc') {
-                                <i class="bi bi-arrow-down"></i>
-                            }
-                        </th>
-                        <th class="text-center py-3">
-                            TIEMPO
-                            @if(ordenActual() === 'tiempo_asc') {
-                                <i class="bi bi-arrow-up"></i>
-                            }
-                        </th>
-                        <th class="text-center py-3">
-                            FECHA
-                            @if(ordenActual() === 'fecha_desc') {
-                                <i class="bi bi-arrow-down"></i>
-                            }
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (ranking().length === 0) {
+            <!-- Barra de Filtros y Ordenamiento -->
+            <div class="sort-bar d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 p-3 rounded-4">
+                <span class="sort-label text-muted-custom">
+                    Ordenar por:
+                </span>
+                <div class="sort-pills d-flex gap-2 flex-wrap">
+                    <button type="button"
+                            [class.active]="ordenActual() === 'puntos_desc'"
+                            (click)="cambiarOrden('puntos_desc')"
+                            class="btn btn-sm btn-sort-pill">
+                        <span>{{ esAciertos() ? 'Más Aciertos' : 'Mejor Puntaje' }}</span>
+                    </button>
+                    <button type="button"
+                            [class.active]="ordenActual() === 'tiempo_asc'"
+                            (click)="cambiarOrden('tiempo_asc')"
+                            class="btn btn-sm btn-sort-pill">
+                        <span>Menor Tiempo</span>
+                    </button>
+                    <button type="button"
+                            [class.active]="ordenActual() === 'fecha_desc'"
+                            (click)="cambiarOrden('fecha_desc')"
+                            class="btn btn-sm btn-sort-pill">
+                        <span>Más Reciente</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Podio visual para los 3 primeros lugares si hay registros -->
+            @if (ranking().length >= 3) {
+                <div class="podium-section mb-4">
+                    <div class="row g-3 justify-content-center align-items-end">
+                        
+                        <!-- Segundo Lugar -->
+                        <div class="col-4 col-md-3 text-center order-1">
+                            <div class="podium-card podium-silver">
+                                <span class="podium-rank-number">#2</span>
+                                <span class="podium-name text-truncate d-block">{{ ranking()[1].nombre }}</span>
+                                <span class="podium-score">{{ ranking()[1].puntos }} pts</span>
+                                <small class="podium-time text-muted">{{ ranking()[1].tiempo_jugado | formatearTiempo }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Primer Lugar (Oro) -->
+                        <div class="col-4 col-md-4 text-center order-0 order-md-1">
+                            <div class="podium-card podium-gold">
+                                <span class="podium-rank-number rank-number-gold">#1</span>
+                                <span class="podium-name text-truncate d-block">{{ ranking()[0].nombre }}</span>
+                                <span class="podium-score gold-score">{{ ranking()[0].puntos }} pts</span>
+                                <small class="podium-time text-muted">{{ ranking()[0].tiempo_jugado | formatearTiempo }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Tercer Lugar -->
+                        <div class="col-4 col-md-3 text-center order-2">
+                            <div class="podium-card podium-bronze">
+                                <span class="podium-rank-number">#3</span>
+                                <span class="podium-name text-truncate d-block">{{ ranking()[2].nombre }}</span>
+                                <span class="podium-score">{{ ranking()[2].puntos }} pts</span>
+                                <small class="podium-time text-muted">{{ ranking()[2].tiempo_jugado | formatearTiempo }}</small>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+            <!-- Tabla de Clasificación Completa -->
+            <div class="table-responsive custom-table-wrapper rounded-4">
+                <table class="table custom-ranking-table align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">
-                                No hay registros para este juego
-                            </td>
+                            <th class="text-center">POS</th>
+                            <th>JUGADOR</th>
+                            <th class="text-center">{{ esAciertos() ? 'ACIERTOS' : 'PUNTOS' }}</th>
+                            <th class="text-center">TIEMPO</th>
+                            <th class="text-center">FECHA</th>
                         </tr>
-                    }
-                    @for (r of ranking(); let i = $index; track r.id) {
-                        <tr class="ranking-row" [appResaltarPosicion]="i">
-                            <td class="text-center py-3 fw-bold">
-                                @if(i === 0) {
-                                    <span class="medalla">🥇</span>
-                                } @else if(i === 1) {
-                                    <span class="medalla">🥈</span>
-                                } @else if(i === 2) {
-                                    <span class="medalla">🥉</span>
-                                } @else {
-                                    {{ i + 1 }}
-                                }
-                            </td>
-                            <td class="text-center py-3">{{ r.nombre }}</td>
-                            <td class="text-center py-3 fw-bold text-warning">{{ r.puntos }}</td>
-                            <td class="text-center py-3">{{ r.tiempo_jugado | formatearTiempo }}</td>
-                            <td class="text-center py-3">{{ formatearFecha(r.fecha) }}</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @if (ranking().length === 0) {
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="empty-ranking-state">
+                                        <h5 class="empty-title">Aún no hay récords para este juego</h5>
+                                        <p class="empty-subtitle">Sé el primer jugador en registrar una partida y posicionarte en el ranking.</p>
+                                        <a [routerLink]="getRutaJuego(juegoActual())" class="btn btn-hero-primary mt-2">
+                                            Jugar a {{ getNombreJuego(juegoActual()) }}
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                        @for (r of ranking(); let i = $index; track r.id) {
+                            <tr class="ranking-row" [appResaltarPosicion]="i">
+                                <td class="text-center">
+                                    <span class="rank-pos-badge" [class.pos-top]="i < 3">
+                                        #{{ i + 1 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="player-name">{{ r.nombre }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="score-badge">
+                                        {{ r.puntos }}
+                                    </span>
+                                </td>
+                                <td class="text-center text-muted-custom">
+                                    {{ r.tiempo_jugado | formatearTiempo }}
+                                </td>
+                                <td class="text-center text-muted-custom">
+                                    {{ formatearFecha(r.fecha) }}
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Acciones al pie de la tabla -->
+            <div class="rankings-footer d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4 pt-3 border-top border-secondary-subtle">
+                <a routerLink="/home" class="link-back">
+                    Volver a la Sala de Juegos
+                </a>
+                <a [routerLink]="getRutaJuego(juegoActual())" class="btn btn-play-current">
+                    Jugar a {{ getNombreJuego(juegoActual()) }} Ahora
+                </a>
+            </div>
+
         </div>
     </div>
-</section>
-
-
+</div>

@@ -39,7 +39,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
   juegoActivo = false;
   juegoTerminado = false;
   empezarJuego = false;
-  resultadoGuardado = false; // NUEVA: Bandera para evitar guardado duplicado
+  resultadoGuardado = false; // Bandera para evitar guardado duplicado
   
   // Tiempo y suscripciones
   startTime!: number;
@@ -58,7 +58,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     private juegoService: JuegosService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Suscribirse al usuario actual
     this.authService.currentUser$.subscribe(user => {
       this.usuario = user;
@@ -71,7 +71,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     // Limpiar el temporizador y completar el observable
     this.detenerTemporizador();
     this.tiempoRestante$.complete();
@@ -102,17 +102,16 @@ export class JuegoPropio implements OnInit, OnDestroy {
     }
   }
 
-  
   // ========== CONTROL DEL JUEGO ==========
 
   // Función que se activa al clickear en el botón de jugar
-  empezar() {
+  empezar(): void {
     this.empezarJuego = true;   
     this.iniciarJuego();       
   }
 
   // Inicializar el juego con valores por defecto
-  iniciarJuego() {
+  iniciarJuego(): void {
     // Crear tablero vacío con objetos Celda
     this.tablero = Array.from({ length: this.tamano }, (_, fila) =>
       Array.from({ length: this.tamano }, (_, columna) => ({
@@ -128,8 +127,8 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.puntuacion = 0;
     this.juegoTerminado = false;
     this.juegoActivo = true;
-    this.resultadoGuardado = false; // RESETEAR la bandera al iniciar
-    this.llegoMaximo = 'NO'; // RESETEAR también esto
+    this.resultadoGuardado = false;
+    this.llegoMaximo = 'NO';
     this.startTime = Date.now();
     
     // Iniciar temporizador
@@ -142,39 +141,35 @@ export class JuegoPropio implements OnInit, OnDestroy {
 
   // ========== TEMPORIZADOR ==========
 
-  private iniciarTemporizador() {
-    this.detenerTemporizador(); // Detener timer previo si existe
+  private iniciarTemporizador(): void {
+    this.detenerTemporizador();
     this.tiempoRestante = 300; // 5 minutos
     this.tiempoRestante$.next(this.tiempoRestante);
 
-    // Crear intervalo que disminuye cada segundo
     this.timerSub = interval(1000).subscribe(() => {
       this.tiempoRestante--;
       this.tiempoRestante$.next(this.tiempoRestante);
 
-      // Si se acabó el tiempo, terminar juego
       if (this.tiempoRestante <= 0) {
         this.detenerTemporizador();
-        this.finalizarJuego("Se terminó el tiempo!");
+        this.finalizarJuego("¡Se terminó el tiempo!");
       }
     });
   }
 
-  private detenerTemporizador() {
+  private detenerTemporizador(): void {
     if (this.timerSub) {
       this.timerSub.unsubscribe();
       this.timerSub = undefined;
     }
   }
 
-
   // ========== LÓGICA DEL JUEGO ==========
 
   // Agregar una celda nueva con valor 2 o 4 en una posición vacía
-  agregarCeldaAleatoria() {
+  agregarCeldaAleatoria(): void {
     const celdasVacias: { fila: number; columna: number }[] = [];
     
-    // Buscar todas las celdas vacías
     this.tablero.forEach((fila, i) =>
       fila.forEach((celda, j) => {
         if (celda.valor === 0) {
@@ -183,14 +178,12 @@ export class JuegoPropio implements OnInit, OnDestroy {
       })
     );
 
-    // Si hay celdas vacías, agregar una nueva
     if (celdasVacias.length) {
       const { fila, columna } = celdasVacias[Math.floor(Math.random() * celdasVacias.length)];
       this.tablero[fila][columna].valor = Math.random() < 0.9 ? 2 : 4;
       this.tablero[fila][columna].esNueva = true;
       this.tablero[fila][columna].id = `${fila}-${columna}-${Date.now()}`;
       
-      // Quitar la animación de nueva después de 300ms
       setTimeout(() => {
         this.tablero[fila][columna].esNueva = false;
       }, 300);
@@ -201,26 +194,21 @@ export class JuegoPropio implements OnInit, OnDestroy {
   mover(direccion: 'arriba' | 'abajo' | 'izquierda' | 'derecha'): void {
     if (!this.juegoActivo || this.juegoTerminado) return;
     
-    // Guardar estado anterior para comparar
     const tableroAnterior = JSON.stringify(this.tablero.map(f => f.map(c => c.valor)));
     let seMovio = false;
 
-    // Resetear estados de animación de fusión
     this.tablero.forEach(fila => fila.forEach(celda => celda.seFusiono = false));
 
-    // Procesar cada línea del tablero según la dirección
     for (let i = 0; i < this.tamano; i++) {
       let linea: Celda[];
       
       if (direccion === 'izquierda' || direccion === 'derecha') {
-        // Movimiento horizontal: procesar fila
         linea = [...this.tablero[i]];
         if (direccion === 'derecha') linea.reverse();
         linea = this.comprimirYFusionar(linea);
         if (direccion === 'derecha') linea.reverse();
         this.tablero[i] = linea;
       } else {
-        // Movimiento vertical: procesar columna
         linea = this.tablero.map(fila => fila[i]);
         if (direccion === 'abajo') linea.reverse();
         linea = this.comprimirYFusionar(linea);
@@ -231,14 +219,12 @@ export class JuegoPropio implements OnInit, OnDestroy {
       }
     }
 
-    // Comparar si hubo cambios en el tablero
     const tableroNuevo = JSON.stringify(this.tablero.map(f => f.map(c => c.valor)));
     
     if (tableroAnterior !== tableroNuevo) {
       seMovio = true;
     }
 
-    // Si hubo movimiento, agregar nueva celda y verificar estado
     if (seMovio) {
       setTimeout(() => {
         this.agregarCeldaAleatoria();
@@ -249,28 +235,23 @@ export class JuegoPropio implements OnInit, OnDestroy {
 
   // Comprimir (eliminar ceros) y fusionar celdas adyacentes iguales
   comprimirYFusionar(linea: Celda[]): Celda[] {
-    // Paso 1: Filtrar celdas vacías (valor 0)
     let lineaComprimida = linea.filter(celda => celda.valor !== 0);
     
-    // Paso 2: Fusionar celdas adyacentes iguales
     for (let i = 0; i < lineaComprimida.length - 1; i++) {
       if (lineaComprimida[i].valor === lineaComprimida[i + 1].valor) {
-        lineaComprimida[i].valor *= 2; // Duplicar el valor
-        lineaComprimida[i].seFusiono = true; // Marcar para animación
-        this.puntuacion += lineaComprimida[i].valor; // Sumar puntos
-        lineaComprimida[i + 1].valor = 0; // Marcar la segunda celda como vacía
+        lineaComprimida[i].valor *= 2;
+        lineaComprimida[i].seFusiono = true;
+        this.puntuacion += lineaComprimida[i].valor;
+        lineaComprimida[i + 1].valor = 0;
         
-        // Quitar animación de fusión después de 300ms
         setTimeout(() => {
           lineaComprimida[i].seFusiono = false;
         }, 300);
       }
     }
     
-    // Paso 3: Filtrar nuevamente las celdas vacías después de fusionar
     lineaComprimida = lineaComprimida.filter(celda => celda.valor !== 0);
     
-    // Paso 4: Rellenar con celdas vacías hasta completar el tamaño
     while (lineaComprimida.length < this.tamano) {
       lineaComprimida.push({
         fila: 0,
@@ -287,39 +268,34 @@ export class JuegoPropio implements OnInit, OnDestroy {
 
   // ========== VERIFICACIÓN DE ESTADO ==========
 
-  // Verificar si el juego terminó (ganó o perdió)
-  verificarEstadoJuego() {
-    // Si ya se guardó el resultado, no verificar más
+  verificarEstadoJuego(): void {
     if (this.resultadoGuardado) return;
     
-    // Verificar si ganó (alcanzó 1024)
+    // Verificar si alcanzó 1024
     for (let fila of this.tablero) {
       for (let celda of fila) {
         if (celda.valor >= 1024) {
           this.puntuacion += 2048;
           this.llegoMaximo = 'SI';
-          this.finalizarJuego('¡Felicidades, llegaste a 1024! 2048 puntos de bonus otorgado');
+          this.finalizarJuego('¡Felicidades, alcanzaste la ficha 1024! Bonus legendario de +2048 puntos.');
           return;
         }
       }
     }
 
-    // Verificar si perdió (no hay movimientos posibles)
+    // Verificar si perdió (no hay más movimientos)
     if (!this.hayMovimientosPosibles()) {
-      this.finalizarJuego("No hay más movimientos posibles!");
+      this.finalizarJuego("¡No hay más movimientos posibles!");
     }
   }
 
-  // Verificar si hay movimientos posibles en el tablero
   hayMovimientosPosibles(): boolean {
-    // Verificar si hay celdas vacías
     for (let fila of this.tablero) {
       for (let celda of fila) {
         if (celda.valor === 0) return true;
       }
     }
 
-    // Verificar si hay celdas adyacentes iguales (horizontal)
     for (let i = 0; i < this.tamano; i++) {
       for (let j = 0; j < this.tamano - 1; j++) {
         if (this.tablero[i][j].valor === this.tablero[i][j + 1].valor) {
@@ -328,7 +304,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
       }
     }
 
-    // Verificar si hay celdas adyacentes iguales (vertical)
     for (let i = 0; i < this.tamano - 1; i++) {
       for (let j = 0; j < this.tamano; j++) {
         if (this.tablero[i][j].valor === this.tablero[i + 1][j].valor) {
@@ -340,12 +315,9 @@ export class JuegoPropio implements OnInit, OnDestroy {
     return false;
   }
 
-
   // ========== FIN DEL JUEGO ==========
 
-  // Manejar victoria
-  async finalizarJuego(resultado: string) {
-    // IMPORTANTE: Verificar si ya se guardó para evitar duplicados
+  async finalizarJuego(resultado: string): Promise<void> {
     if (this.resultadoGuardado) {
       return;
     }
@@ -353,12 +325,11 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.juegoTerminado = true;
     this.juegoActivo = false;
     this.detenerTemporizador();
-    this.resultadoGuardado = true; // Marcar como guardado ANTES de guardar
+    this.resultadoGuardado = true;
     
     const endTime = Date.now();
     const duracionSegundos = Math.floor((endTime - this.startTime) / 1000);
 
-    // Guardar en base de datos
     const guardadoExitoso = await this.juegoService.guardarResultadoJuegoPropio(
       this.usuario?.nombre,
       this.puntuacion,
@@ -367,12 +338,11 @@ export class JuegoPropio implements OnInit, OnDestroy {
     );
     
     if (guardadoExitoso) {
-      console.log("Resultado guardado correctamente");
+      console.log("Resultado de 1024 guardado correctamente");
     } else {
-      console.error("Error al guardar resultado");
+      console.error("Error al guardar resultado de 1024");
     }
 
-    // Mostrar diálogo de victoria
     this.dialog.open(JuegosDialog, {
       data: { 
         resultado, 
@@ -387,7 +357,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     });
   }
 
-  reiniciarJuego() {
+  reiniciarJuego(): void {
     Swal.fire({
       title: '¿Reiniciar juego?',
       text: 'Se perderá tu progreso actual',
@@ -406,7 +376,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     });
   }
 
-  volverHome() {
+  volverHome(): void {
     if (this.juegoActivo && !this.juegoTerminado) {
       Swal.fire({
         title: '¿Salir del juego?',
@@ -428,31 +398,31 @@ export class JuegoPropio implements OnInit, OnDestroy {
     }
   }
 
+  // ========== ESTILOS VISUALES CYBER-NEON ==========
 
-  // ========== ESTILOS VISUALES ==========
-
-  // Obtener el color de fondo según el valor de la celda
+  // Paleta moderna de degradados y colores neón para las celdas
   obtenerColorCelda(valor: number): string {
     const colores: { [key: number]: string } = {
-      0: '#cdc1b4',
-      2: '#eee4da',
-      4: '#ede0c8',
-      8: '#f2b179',
-      16: '#f59563',
-      32: '#f67c5f',
-      64: '#f65e3b',
-      128: '#edcf72',
-      256: '#edcc61',
-      512: '#edc850',
-      1024: '#edc53f',
-      2048: '#edc22e'
+      0: 'rgba(255, 255, 255, 0.05)',
+      2: '#240046',
+      4: '#3c096c',
+      8: '#5a189a',
+      16: '#7b2cbf',
+      32: '#9d4edd',
+      64: '#c77dff',
+      128: '#0077b6',
+      256: '#00b4d8',
+      512: '#00f2fe',
+      1024: '#ffd700',
+      2048: '#00ff88'
     };
     
-    return colores[valor] || '#3c3a32';
+    return colores[valor] || '#1a0c30';
   }
 
-  // Obtener el color del texto según el valor de la celda
   obtenerColorTexto(valor: number): string {
-    return valor <= 4 ? '#776e65' : '#f9f6f2';
+    if (valor === 0) return 'transparent';
+    if (valor >= 512) return '#080312'; // Contraste oscuro para fichas doradas/cian muy brillantes
+    return '#ffffff';
   }
 }

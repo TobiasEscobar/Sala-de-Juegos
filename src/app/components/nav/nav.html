@@ -1,49 +1,94 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" routerLink="/home">Sala de Juegos</a>
+<nav class="custom-navbar sticky-top">
+    <div class="container-fluid px-3 px-lg-4">
+        
+        <!-- Logotipo y Marca usando el Favicon -->
+        <a class="navbar-brand-custom" routerLink="/home" (click)="closeMenu()">
+            <span class="brand-icon-wrapper">
+                <img src="assets/favicon1.ico" alt="Logo Sala de Juegos" class="brand-logo-img">
+                <span class="brand-glow"></span>
+            </span>
+            <span class="brand-text">
+                SALA DE <span class="brand-gradient">JUEGOS</span>
+            </span>
+        </a>
 
-        <!-- Boton desplegable -->
-        <button
-            class="navbar-toggler"
-            type="button"
-            (click)="menuAbierto = !menuAbierto"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <!-- Botón Toggle para Móviles -->
+        <button class="navbar-toggle-btn d-lg-none" 
+                type="button" 
+                (click)="toggleMenu()" 
+                [attr.aria-expanded]="isMenuOpen" 
+                aria-label="Abrir menú de navegación">
+            <span class="hamburger-bar" [class.bar-active]="isMenuOpen"></span>
+            <span class="hamburger-bar" [class.bar-active]="isMenuOpen"></span>
+            <span class="hamburger-bar" [class.bar-active]="isMenuOpen"></span>
         </button>
 
-        <!-- Contenedor del menú -->
-        <div class="collapse navbar-collapse" [class.show]="menuAbierto" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/home">Home</a>
+        <!-- Contenedor del Menú de Navegación -->
+        <div class="navbar-menu-container" [class.show-mobile-menu]="isMenuOpen">
+            
+            <!-- Enlaces Principales -->
+            <ul class="nav-links-list">
+                <li class="nav-link-item">
+                    <a class="nav-link-custom" 
+                       routerLink="/home" 
+                       routerLinkActive="active-nav-link" 
+                       [routerLinkActiveOptions]="{ exact: true }"
+                       (click)="closeMenu()">
+                        Inicio
+                    </a>
                 </li>
-                <li>
-                    <a class="nav-link" routerLink="/rankings">Rankings</a>
+                <li class="nav-link-item">
+                    <a class="nav-link-custom" 
+                       routerLink="/rankings" 
+                       routerLinkActive="active-nav-link"
+                       (click)="closeMenu()">
+                        Rankings
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/quien-soy">Sobre mi</a>
+                <li class="nav-link-item">
+                    <a class="nav-link-custom" 
+                       routerLink="/quien-soy" 
+                       routerLinkActive="active-nav-link"
+                       (click)="closeMenu()">
+                        Sobre Mí
+                    </a>
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @if (!isLogged) {
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/login">Iniciar sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/registro">Registrarse</a>
-                </li>
+            <!-- Sección de Usuario / Autenticación -->
+            <div class="nav-auth-section">
+                @if (!isLoggedIn) {
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <a routerLink="/login" 
+                           class="btn btn-nav-login" 
+                           (click)="closeMenu()">
+                            Iniciar Sesión
+                        </a>
+                        <a routerLink="/registro" 
+                           class="btn btn-nav-register" 
+                           (click)="closeMenu()">
+                            Registrarse
+                        </a>
+                    </div>
                 } @else {
-                <li class="nav-item">
-                    <span class="nav-link">Ingreso con: {{ currentUser?.nombre }}</span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" (click)="logout()">Cerrar sesión</a>
-                </li>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <!-- Chip de Usuario Logueado -->
+                        <div class="user-profile-chip" title="Usuario conectado">
+                            <span class="user-avatar-dot"></span>
+                            <span class="user-name-text">{{ currentUser?.nombre || 'Gamer' }}</span>
+                        </div>
+                        
+                        <!-- Botón Cerrar Sesión -->
+                        <button type="button" 
+                                class="btn btn-nav-logout" 
+                                (click)="logout()" 
+                                title="Cerrar sesión actual">
+                            <span class="logout-text">Salir</span>
+                        </button>
+                    </div>
                 }
-            </ul>
+            </div>
+
         </div>
     </div>
 </nav>

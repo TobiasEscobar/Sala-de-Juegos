@@ -1,5 +1,100 @@
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-    <div class="container">
-        <p class="mb-0">© 2025 Sala de Juegos - Todos los derechos reservados</p>
+<footer class="custom-footer mt-auto">
+    
+    <!-- Línea de acento neón superior -->
+    <div class="footer-neon-bar"></div>
+
+    <div class="container py-5">
+        <div class="row g-4 justify-content-between">
+
+            <!-- Columna 1: Marca y Resumen de la Plataforma -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="footer-brand mb-3">
+                    <img src="assets/favicon1.ico" alt="Logo" class="footer-brand-logo-img me-2">
+                    <span class="footer-brand-text">
+                        SALA DE <span class="footer-brand-gradient">JUEGOS</span>
+                    </span>
+                </div>
+                <p class="footer-description">
+                    Plataforma web de minijuegos interactivos con chat en tiempo real, persistencia de puntuaciones en Supabase y tablas de clasificación competitivas.
+                </p>
+                
+                <!-- Indicador de estado del sistema -->
+                <div class="system-status-pill">
+                    <span class="status-indicator-dot"></span>
+                    <span>Servidores y Realtime en Línea</span>
+                </div>
+            </div>
+
+            <!-- Columna 2: Acceso Rápido a los Minijuegos -->
+            <div class="col-6 col-md-3 col-lg-2">
+                <h5 class="footer-column-title">Minijuegos</h5>
+                <ul class="footer-links-list">
+                    <li>
+                        <a routerLink="/ahorcado" class="footer-link">Ahorcado</a>
+                    </li>
+                    <li>
+                        <a routerLink="/mayor-o-menor" class="footer-link">Mayor o Menor</a>
+                    </li>
+                    <li>
+                        <a routerLink="/preguntados" class="footer-link">Preguntados</a>
+                    </li>
+                    <li>
+                        <a routerLink="/1024" class="footer-link">1024 Puzzle</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Columna 3: Navegación y Comunidad -->
+            <div class="col-6 col-md-3 col-lg-2">
+                <h5 class="footer-column-title">Comunidad</h5>
+                <ul class="footer-links-list">
+                    <li>
+                        <a routerLink="/home" class="footer-link">Inicio</a>
+                    </li>
+                    <li>
+                        <a routerLink="/rankings" class="footer-link">Clasificación</a>
+                    </li>
+                    <li>
+                        <a routerLink="/quien-soy" class="footer-link">Sobre Mí</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/TobiasEscobar" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Columna 4: Stack Tecnológico y Créditos -->
+            <div class="col-12 col-lg-3">
+                <h5 class="footer-column-title">Desarrollo</h5>
+                <p class="footer-dev-text mb-3">
+                    Creado por <strong class="dev-highlight">Tobias Escobar</strong> utilizando las últimas tecnologías web:
+                </p>
+
+                <!-- Píldoras de Tecnologías -->
+                <div class="tech-badges-grid mb-3">
+                    <span class="tech-badge">Angular 20</span>
+                    <span class="tech-badge">Supabase</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Bootstrap 5</span>
+                </div>
+
+                <!-- Botón para volver arriba suavemente -->
+                <button type="button" class="btn btn-scroll-top" (click)="scrollToTop()" title="Volver al inicio de la página">
+                    <span>Volver arriba</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Barra Inferior de Copyright -->
+        <div class="footer-bottom-bar mt-5 pt-4 border-top border-secondary-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="copyright-text">
+                © {{ currentYear }} <strong>Sala de Juegos</strong>. Todos los derechos reservados.
+            </span>
+            <span class="footer-love-text">
+                Diseñado con 💗 para jugar y competir en comunidad.
+            </span>
+        </div>
     </div>
+
 </footer>

@@ -1,13 +1,381 @@
-.img-carta {
-    width: 240px;
-    height: 240px;
+/* ==========================================================================
+   🎮 MAYOR O MENOR - ESTILOS GAMING Y GLASSMORPHISM
+   ========================================================================== */
+
+.game-screen-wrapper {
+    min-height: 100vh;
+    padding-bottom: 70px;
+    background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 217, 255, 0.2) 0%, transparent 45%),
+        radial-gradient(circle at 85% 70%, rgba(196, 11, 180, 0.22) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(8, 3, 18, 0.88) 0%, rgba(13, 5, 26, 0.95) 100%),
+        url('/background3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #ffffff;
 }
 
-.card {
+.game-main-card {
+    background: rgba(22, 10, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 38px 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.game-main-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00d9ff, #c40bb4, transparent);
+}
+
+/* Encabezado */
+.game-category-pill {
+    display: inline-block;
+    background: rgba(0, 217, 255, 0.15);
+    border: 1px solid rgba(0, 217, 255, 0.35);
+    color: #00d9ff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.game-main-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #00d9ff, #c40bb4 60%, #ff00ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.game-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* ==========================================================================
+   📊 HUD DE ESTADÍSTICAS DEL JUEGO
+   ========================================================================== */
+
+.game-hud-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.hud-item {
+    background: rgba(12, 5, 24, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hud-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 217, 255, 0.3);
+}
+
+.hud-icon {
+    font-size: 1.5rem;
+}
+
+.hud-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.hud-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.text-cyan { color: #00d9ff; }
+.text-gold { color: #ffd700; }
+.text-orange { color: #ffb703; }
+.text-danger { color: #ff4757; }
+
+.hud-warning {
+    color: #ff4757 !important;
+    animation: pulseWarning 1s infinite;
+}
+
+@keyframes pulseWarning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ==========================================================================
+   🃏 TAPETE Y PEDESTAL DE LA CARTA
+   ========================================================================== */
+
+.card-arena-container {
+    position: relative;
+    padding: 10px 0;
+}
+
+.arena-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 4px 14px;
+    border-radius: 12px;
+}
+
+.card-pedestal {
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+}
+
+.card-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    height: 280px;
+    background: #00d9ff;
+    opacity: 0.25;
+    filter: blur(45px);
+    border-radius: 20px;
+}
+
+.playing-card {
+    width: 200px;
+    height: 280px;
+    object-fit: contain;
+    border-radius: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(14, 6, 26, 0.6);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.card-pedestal:hover .playing-card {
+    transform: scale(1.04) rotate(-1deg);
+}
+
+/* ==========================================================================
+   ▲▼ BOTONES DE ELECCIÓN (MAYOR O MENOR)
+   ========================================================================== */
+
+.choice-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.btn-choice-higher,
+.btn-choice-lower {
+    flex: 1;
+    min-width: 240px;
+    padding: 16px 20px;
+    border-radius: 18px;
     border: none;
-    transition: transform 0.2s;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.card:hover {
-    transform: translateY(-5px);
+.btn-choice-higher {
+    background: linear-gradient(135deg, #00b4d8, #0077b6 60%, #00ff88);
+}
+
+.btn-choice-higher:hover {
+    background: linear-gradient(135deg, #00d9ff, #0096c7 60%, #00ff88);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 217, 255, 0.5);
+}
+
+.btn-choice-lower {
+    background: linear-gradient(135deg, #c40bb4, #7928ca 60%, #ff4757);
+}
+
+.btn-choice-lower:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd 60%, #ff4757);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(196, 11, 180, 0.5);
+}
+
+.choice-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.choice-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.choice-main {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.choice-sub {
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
+/* Estado Pre-Juego */
+.pre-game-box {
+    background: rgba(12, 5, 24, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.pre-game-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.pre-game-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.pre-game-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botones de acción */
+.btn-action-play {
+    background: linear-gradient(135deg, #c40bb4, #7928ca);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 12px 28px;
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 6px 20px rgba(196, 11, 180, 0.4);
+    transition: all 0.25s ease;
+}
+
+.btn-action-play:hover {
+    background: linear-gradient(135deg, #e879f9, #9d4edd);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(196, 11, 180, 0.6);
+    color: #ffffff;
+}
+
+.btn-action-restart {
+    background: linear-gradient(135deg, #ffb703, #fb8500);
+    color: #080312;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 12px 28px;
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 6px 20px rgba(255, 183, 3, 0.35);
+    transition: all 0.25s ease;
+}
+
+.btn-action-restart:hover {
+    background: linear-gradient(135deg, #ffd166, #ffb703);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 183, 3, 0.5);
+    color: #080312;
+}
+
+.btn-action-home {
+    background: rgba(0, 217, 255, 0.08);
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    color: #00d9ff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 12px 28px;
+    border-radius: 14px;
+    transition: all 0.25s ease;
+}
+
+.btn-action-home:hover {
+    background: #00d9ff;
+    color: #080312;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 217, 255, 0.45);
+}
+
+@media (max-width: 991px) {
+    .game-hud-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .game-main-card {
+        padding: 24px 16px;
+    }
+
+    .game-main-title {
+        font-size: 1.8rem;
+    }
+
+    .game-hud-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hud-item-time {
+        grid-column: span 2;
+    }
+
+    .btn-choice-higher,
+    .btn-choice-lower {
+        min-width: 100%;
+        padding: 14px 16px;
+    }
+
+    .playing-card {
+        width: 170px;
+        height: 240px;
+    }
 }

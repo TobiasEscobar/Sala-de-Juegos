@@ -1,11 +1,28 @@
-<h1 mat-dialog-title>Fin del juego</h1>
+<div class="game-dialog-container">
+    <div class="dialog-header text-center">
+        <div class="dialog-icon-wrapper mb-2">
+            <img src="assets/favicon1.ico" alt="Logo" class="dialog-logo-img">
+        </div>
+        <h2 class="dialog-title">Fin de la Partida</h2>
+    </div>
 
-<mat-dialog-content>
-    <p>Resultado: {{data.resultado}}</p>
-    <p>Puntos: {{data.puntos}}</p>
-</mat-dialog-content>
+    <div class="dialog-content text-center py-3">
+        <div class="result-message mb-3">
+            {{ data.resultado }}
+        </div>
 
-<mat-dialog-actions>
-    <button mat-raised-button color="primary" (click)="cerrar('home')">Salir al Home</button>
-    <button mat-raised-button color="primary" (click)="cerrar('reintentar')">Volver a jugar</button>
-</mat-dialog-actions>
+        <div class="dialog-score-box">
+            <span class="score-label">Puntaje Obtenido</span>
+            <span class="score-value">{{ data.puntos ?? data.aciertos ?? 0 }}</span>
+        </div>
+    </div>
+
+    <div class="dialog-actions d-flex justify-content-center gap-3 mt-3">
+        <button type="button" class="btn btn-dialog-retry" (click)="cerrar('reintentar')">
+            <span>Volver a Jugar</span>
+        </button>
+        <button type="button" class="btn btn-dialog-home" (click)="cerrar('home')">
+            <span>Ir al Inicio</span>
+        </button>
+    </div>
+</div>

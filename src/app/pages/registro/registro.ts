@@ -1,14 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, signal } from '@angular/core';
 import { Supabase } from '../../services/supabase';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Router } from '@angular/router';
-
-//Manejo de errores
+import { Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialog } from '../../dialogs/error-dialog/error-dialog';
 
-// Validator a nivel de FormGroup
+// Validador a nivel de formulario para comprobar coincidencia de contraseñas
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password')?.value;
   const passwordConfirm = control.get('passwordConfirm')?.value;
@@ -22,101 +20,118 @@ export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): V
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
-
 export class Registro {
   usuarioForm: FormGroup;
+  isSubmitting = signal<boolean>(false);
 
-  constructor(private supabaseService: Supabase, private fb: FormBuilder, private router: Router, private dialog: MatDialog) {
-    this.usuarioForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
-      apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
-      email: ['', [Validators.required, Validators.email]],
-      edad: ['', [Validators.required, Validators.pattern(/^[0-9]{1,2}$/), Validators.min(8), Validators.max(99)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      passwordConfirm: ['', [Validators.required, Validators.minLength(6)]]
-    }, { validators: passwordMatchValidator });
+  constructor(
+    private supabaseService: Supabase,
+    private fb: FormBuilder,
+    private router: Router,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.usuarioForm = this.fb.group(
+      {
+        nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
+        apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/), Validators.minLength(4)]],
+        email: ['', [Validators.required, Validators.email]],
+        edad: ['', [Validators.required, Validators.pattern(/^[0-9]{1,2}$/), Validators.min(8), Validators.max(99)]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        passwordConfirm: ['', [Validators.required, Validators.minLength(6)]]
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
-  // mensajes auxiliares de validacion
+  // Mensajes auxiliares de validación sin emojis
   private validationMessages: { [key: string]: string } = {
-    nombre: 'El nombre es obligatorio y debe tener mínimo 4 caracteres.',
-    apellido: 'El apellido es obligatorio y debe tener mínimo 4 caracteres.',
-    password: 'Contraseña inválida: mínimo 6 caracteres o no hay coincidencia',
-    passwordConfirm: 'Contraseña inválida: minimo 6 caracteres o no coincidencia',
-    edad: 'Ingrese su edad en numeros y debe ser mayor a 8 y menor a 100.',
-    email: 'Email inválido.'
+    nombre: 'El nombre es obligatorio y debe tener mínimo 4 letras.',
+    apellido: 'El apellido es obligatorio y debe tener mínimo 4 letras.',
+    password: 'Contraseña inválida: mínimo 6 caracteres.',
+    passwordConfirm: 'Las contraseñas no coinciden o tienen menos de 6 caracteres.',
+    edad: 'La edad debe ser numérica, mayor a 8 y menor a 100.',
+    email: 'Formato de correo electrónico inválido.'
   };
 
-  // funcion auxiliar para verificacion del formulario
-  private mostrarErroresFormulario() {
-    for (const campo in this.usuarioForm.controls) {
-      const control = this.usuarioForm.get(campo);
+  // Función auxiliar para verificación de errores
+  private showFormErrors(): void {
+    for (const fieldName in this.usuarioForm.controls) {
+      const control = this.usuarioForm.get(fieldName);
       if (control && control.invalid) {
-        this.mostrarError(this.validationMessages[campo]);
-        break; // solo muestra el primer error
+        this.showErrorDialog(this.validationMessages[fieldName] || 'Por favor revise los campos.');
+        break;
       }
-      if (this.usuarioForm.errors?.['passwordMismatch']) {
-        this.mostrarError('Las contraseñas no coinciden.');
-        return;
-      }
+    }
+    if (this.usuarioForm.errors?.['passwordMismatch']) {
+      this.showErrorDialog('Las contraseñas no coinciden.');
     }
   }
 
-  // Mostrar dialogo de error
-  mostrarError(mensaje: string) {
+  // Mostrar diálogo de error
+  showErrorDialog(message: string): void {
     this.dialog.open(ErrorDialog, {
-      data: { message: mensaje },
+      data: { message }
     });
   }
 
-  async crearUsuario() {
+  async crearUsuario(): Promise<void> {
     if (this.usuarioForm.invalid) {
-      this.usuarioForm.markAllAsTouched(); // fuerza validación en todos los campos
+      this.usuarioForm.markAllAsTouched();
 
-      // 1️⃣ Si hay campos vacíos
-      if (Object.values(this.usuarioForm.value).some(val => !val)) {
-        this.mostrarError('Aún faltan campos por completar.');
+      if (Object.values(this.usuarioForm.value).some((val) => !val)) {
+        this.showErrorDialog('Aún faltan campos obligatorios por completar.');
       } else {
-        // 2️⃣ Si están completos pero con errores (email invalido, contraseña corta, etc)
-        this.mostrarErroresFormulario();
+        this.showFormErrors();
       }
       return;
     }
 
-    const { email, password, passwordConfirm, nombre, apellido, edad } = this.usuarioForm.value;
+    const { email, password, nombre, apellido, edad } = this.usuarioForm.value;
+    this.isSubmitting.set(true);
+    this.cdr.markForCheck();
 
     try {
+      // 1. Registrar usuario en Supabase Auth
       const { data: user, error: authError } = await this.supabaseService.registrarUsuario(email, password);
 
       if (authError) {
-        this.mostrarError(this.supabaseService['mapAuthError'](authError));
-        return
-      } 
-
-      // 2. Si se creó bien, guardar datos adicionales en la tabla `usuarios`
-      const nuevoUsuario = {
-        nombre,
-        apellido,
-        email,
-        edad,
-        user_id: user.user?.id // UID de Supabase
-      };
-
-      const { error: insertError } = await this.supabaseService.insertarUsuario(nuevoUsuario);
-
-      if (insertError) {
-        this.mostrarError('Error al guardar los datos del usuario en la base.');
+        this.isSubmitting.set(false);
+        this.cdr.markForCheck();
+        this.showErrorDialog(this.supabaseService.mapAuthError(authError));
         return;
       }
-      // 3. Si todo fue bien, dirige al home
-      console.log('Usuario registrado con éxito:', nuevoUsuario);
+
+      // 2. Insertar perfil adicional en la tabla 'usuarios'
+      const newUserData = {
+        nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        email: email.trim(),
+        edad: Number(edad),
+        user_id: user.user?.id
+      };
+
+      const { error: insertError } = await this.supabaseService.insertarUsuario(newUserData);
+
+      if (insertError) {
+        console.error('Error insertando usuario en tabla:', insertError);
+        this.isSubmitting.set(false);
+        this.cdr.markForCheck();
+        this.showErrorDialog('Usuario creado en autenticación, pero ocurrió un error al guardar los datos de perfil.');
+        return;
+      }
+
+      console.log('Usuario registrado con éxito:', newUserData);
+      this.isSubmitting.set(false);
       this.router.navigate(['/home']);
     } catch (e: any) {
-      this.mostrarError(e.message || 'Ocurrió un error inesperado.');
+      this.isSubmitting.set(false);
+      this.cdr.markForCheck();
+      this.showErrorDialog(e.message || 'Ocurrió un error inesperado al registrar el usuario.');
     }
   }
 }
